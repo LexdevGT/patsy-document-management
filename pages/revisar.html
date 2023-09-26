@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patsy DM | Dashboard</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="../assets/all/fonts_google_sans_300_400.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../assets/all/fontawesome-free/css/all.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../assets/all/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="../assets/all/daterangepicker/daterangepicker.css">
+  <!-- summernote -->
+  <link rel="stylesheet" href="../assets/all/summernote/summernote-bs4.min.css">
+  <!-- Theme style -->
+  <link rel="icon" type="image/x-icon" href="../assets/all/favicon.png">
+  <link rel="stylesheet" href="../assets/all/css/adminlte.min.css">
+  <link rel="stylesheet" href="../assets/all/css/style.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="../" class="nav-link"><b>Cerrar sesión</b></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link"><b>Alexander Jáuregui</b></a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="#" class="brand-link">
+      <img src="../assets/all/images/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">
+        Patsy DM
+      </span>
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar" id="left-bar">
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- First Row -->
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              
+                <!-- we are adding the accordion ID so Bootstrap's collapse plugin detects it -->
+                <div id="accordion">
+                  <div class="card card-primary">
+                    <div class="card-header">
+                      <h4 class="card-title w-100">
+                        <a class="d-block w-100" data-toggle="collapse" href="#collapseOne">
+                          Información de documento
+                        </a>
+                      </h4>
+                    </div>
+                    <div id="collapseOne" class="collapse" data-parent="#accordion">
+                      <div class="card-body">
+                        <b>Nombre del documento:</b> Lorem ipsum dolor sit <br>
+                        <b>Dueño del proceso:</b> amet, consectetur adipiscing elit <br>
+                        <b>Tipo de documento:</b> sed do eiusmod<br>
+                        <b>Versión:</b> tempor incididunt ut labore<br>
+                        <b>Código:</b> ut aliquip ex ea commodo
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- Row -->
+        <div class="row">
+          <div class="col text-center mt-3">
+            <h3 >Nombre del proyecto</h3>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col mt-3">
+            <textarea id="summernote">
+              <p>Por favor revisar este<a href="https://google.com/" target="_blank" style="background-color: rgb(255, 255, 255);">&nbsp;texto</a>, todo este&nbsp;<span style="background-color: rgb(156, 198, 239);">parrafo&nbsp;</span>es una&nbsp;<span style="font-weight: bolder;">muestra</span>&nbsp;de todo lo que va a ser posible&nbsp;<u>hacer.</u><br></p>
+            </textarea>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th>Elaboró</th>
+                  <th>Revisó</th>
+                  <th>Aprobó</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr >
+                  <td>Nombre</td>
+                  <td>Nombre</td>
+                  <td>Nombre</td>
+                </tr>
+                <tr >
+                  <td>Puesto</td>
+                  <td>Puesto</td>
+                  <td>Puesto</td>
+                </tr>
+                <tr >
+                  <td>Fecha</td>
+                  <td>Fecha</td>
+                  <td>Fecha</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-3">
+          <div class=" col-auto">
+            <button class="btn btn-patsy" id="revisado">Documento revisado</button>
+          </div>
+          <div class=" col ">
+            <button class="btn btn-patsy-exit" id="rechazado">Rechazar</button>
+          </div>
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="../assets/all/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../assets/all/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="../assets/all/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- daterangepicker -->
+<script src="../assets/all/moment/moment.min.js"></script>
+<script src="../assets/all/daterangepicker/daterangepicker.js"></script>
+<!-- Summernote -->
+<script src="../assets/all/summernote/summernote-bs4.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../assets/all/js/adminlte.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="../assets/all/js/core.js"></script>
+<script src="../assets/revisar/js/core.js"></script>
+
+<div class="modal fade" id="modal-rechazo">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content bg-patsy">
+      <div class="modal-header">
+        <h4 class="modal-title">Patsy</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <textarea>
+        Deja tu razón del rechazo.
+      </textarea>
+      
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-default" id="btn-save-rechazo" data-dismiss="modal">Guardar</button>
+        <button type="button" class="btn btn-default" id="btn-close-login" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+</body>
+</html>

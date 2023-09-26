@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patsy DM | Dashboard</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="../assets/all/fonts_google_sans_300_400.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../assets/all/fontawesome-free/css/all.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../assets/all/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="../assets/all/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Theme style -->
+  <link rel="icon" type="image/x-icon" href="../assets/all/favicon.png">
+  <link rel="stylesheet" href="../assets/all/css/adminlte.min.css">
+  <link rel="stylesheet" href="../assets/all/css/style.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="../" class="nav-link"><b>Cerrar sesión</b></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link"><b>Alexander Jáuregui</b></a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="#" class="brand-link">
+      <img src="../assets/all/images/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">
+        Patsy DM
+      </span>
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar" id="left-bar">
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Row -->
+        <div class="row ">
+          <div class="col-sm-3">
+            <label>Nombre:</label>
+          </div>
+          <div class="col-sm-3">
+            <label>Apellido:</label>
+          </div>
+          <div class="col-sm-3">
+            <label>Email:</label>
+          </div>
+          <div class="col-sm-3">
+            <label>Foto:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col-sm-3">
+            <input class="form-control" type="text" placeholder="" id="nombre">
+          </div>
+          <div class="col-sm-3">
+            <input class="form-control" type="text" placeholder="" id="apellido">
+          </div>
+          <div class="col-sm-3">
+            <input class="form-control" type="text" placeholder="" id="email">
+          </div>
+          <div class="col-sm-3">
+            <input class="form-control" type="file" placeholder="" id="foto">
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-2">
+          <div class="col-sm-3">
+            <label>Región:</label>
+          </div>
+          <div class="col-sm-3">
+            <label>Sucursal:</label>
+          </div>
+          <div class="col-sm-3">
+            <label>Rol:</label>
+          </div>
+          <div class="col-sm-3">
+            <label>Estatus:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row --> 
+        <div class="row">
+          <div class="col-sm-3">
+            <select class="custom-select form-control-border" id="select_region">
+              <option>Value 1</option>
+              <option>Value 2</option>
+              <option>Value 3</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <select class="custom-select form-control-border" id="select_sucursal">
+              <option>Value 1</option>
+              <option>Value 2</option>
+              <option>Value 3</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <select class="custom-select form-control-border" id="select_rol">
+              <option>Value 1</option>
+              <option>Value 2</option>
+              <option>Value 3</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <select class="custom-select form-control-border" id="select_estatus">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-2">
+          <div class="col-sm-4">
+            <label>Contraseña:</label>
+          </div>
+          <div class="col-sm-4">
+            <label>Confirmar contraseña:</label>
+          </div>
+          <div class="col-sm-4">
+            <label>Firma:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col-sm-4">
+            <input class="form-control" type="password" placeholder="" id="pass1">
+          </div>
+          <div class="col-sm-4">
+            <input class="form-control" type="password" placeholder="" id="pass2">
+          </div>
+          <div class="col-sm-4">
+            <input class="form-control" type="file" placeholder="" id="firma">
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-3">
+          <div class=" col-auto">
+            <button class="btn btn-patsy" id="enviar">Crear</button>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-5">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title" style="color: white;">Usuarios</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="width: 10px">#</th>
+                      <th>Nombre usuario</th>
+                      <th>Email</th>
+                      <th>Activo/Inactivo</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cuerpo_tabla">
+                    <tr>
+                      <td>1.</td>
+                      <td>Usuario 1</td>
+                      <td>usuario1@gmail.com</td>
+                      <td>
+                        <div class="form-group">
+                          <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                            <label class="custom-control-label" for="customSwitch1"></label>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>2.</td>
+                      <td>Usuario 2</td>
+                      <td>usuario2@gmail.com</td>
+                      <td>
+                        <div class="form-group">
+                          <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            <input type="checkbox" class="custom-control-input" id="customSwitch2">
+                            <label class="custom-control-label" for="customSwitch2"></label>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          
+        </div>
+        <!-- /.Row -->
+        
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="../assets/all/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../assets/all/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="../assets/all/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="../assets/all/sweetalert2/sweetalert2.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../assets/all/js/adminlte.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="../assets/all/js/core.js"></script>
+<script src="../assets/manto_usuarios/js/core.js"></script>
+
+
+
+</body>
+</html>

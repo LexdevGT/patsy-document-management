@@ -1,0 +1,64 @@
+.btn-patsy {
+  color: #fff;
+  background-color: #72253d;
+  border-color: #72253d;
+  box-shadow: none;
+}
+
+.btn-patsy-exit {
+  color: #fff;
+  background-color: #b53c62;
+  border-color: #b53c62;
+  box-shadow: none;
+}
+
+h7 {
+  font-size: 10px;
+}
+
+.card-patsy {
+    border-top: 3px solid #72253d;
+}
+
+.bg-patsy {
+    background-color: #72253d!important;
+    color: #fff;
+}
+
+.bg-patsy-card-dashboard {
+    background-color: #FFFFFF!important;
+}
+
+.card-patsy-n:not(.card-outline)>.card-header {
+    background-color: #72253d!important;
+}
+
+.card-header {
+    background-color: #72253d!important;
+}
+
+.center-small-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+    
+.small-box {
+  margin: auto;
+}
+
+.folder-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 5px;
+}

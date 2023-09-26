@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patsy DM | Dashboard</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="../assets/all/fonts_google_sans_300_400.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../assets/all/fontawesome-free/css/all.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../assets/all/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="../assets/all/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Theme style -->
+  <link rel="icon" type="image/x-icon" href="../assets/all/favicon.png">
+  <link rel="stylesheet" href="../assets/all/css/adminlte.min.css">
+  <link rel="stylesheet" href="../assets/all/css/style.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <!-- Navbar Search -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+          <i class="fas fa-search"></i>
+        </a>
+        <div class="navbar-search-block">
+          <form class="form-inline">
+            <div class="input-group input-group-sm">
+              <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+              <div class="input-group-append">
+                <button class="btn btn-navbar" type="submit">
+                  <i class="fas fa-search"></i>
+                </button>
+                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="../" class="nav-link"><b>Cerrar sesión</b></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link"><b>Alexander Jáuregui</b></a>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="#" class="brand-link">
+      <img src="../assets/all/images/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">
+        Patsy DM
+      </span>
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar" id="left-bar">
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- First Row -->
+        <div class="row ">
+          <div class="col">
+            <label>Estatus:</label>
+          </div>
+          <div class="col">
+            <label>Proceso:</label>
+          </div>
+          <div class="col">
+            <label>Subproceso:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col">
+            <select class="form-control" id="status">
+              <option>Selecciona un estatus...</option>
+              <option>Creación</option>
+              <option>Modificación</option>
+              <option>Eliminar</option>
+            </select>
+          </div>
+          <div class="col">
+            <select class="form-control" id="proceso">
+              <option>Selecciona un proceso...</option>
+              <option>Proceso #1</option>
+              <option>Proceso #2</option>
+              <option>Proceso #3</option>
+            </select>
+          </div>
+          <div class="col">
+            <select class="form-control" id="subproceso">
+              <option>Selecciona un subproceso...</option>
+              <option>subproceso #1</option>
+              <option>subproceso #2</option>
+              <option>subproceso #3</option>
+            </select>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-5">
+          <div class="col">
+            <label>Tipo de documento:</label>
+          </div>
+          <div class="col">
+            <label>Nombre del documento:</label>
+          </div>
+          <div class="col">
+            <label>Solicitante:</label>
+          </div>
+          <div class="col">
+            <label>Quien revisa:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col">
+            <select class="form-control">
+              <option>Selecciona un tipo de documento...</option>
+              <option>Manual</option>
+              <option>Política</option>
+              <option>Caracterización de procesos</option>
+              <option>Procedimiento</option>
+              <option>Especificación Técnica/Ficha Técnica</option>
+              <option>Instructivo</option>
+              <option>Metodo de trabajo</option>
+            </select>
+          </div>
+          <div class="col">
+            <input class="form-control" type="text" placeholder="">
+          </div>
+          <div class="col">
+            <select class="form-control">
+              <option>Selecciona un usuario...</option>
+              <option>Usuario #1</option>
+              <option>Usuario #2</option>
+              <option>Usuario #3</option>
+            </select>
+          </div>
+          <div class="col">
+            <select class="form-control">
+              <option>Selecciona un usuario...</option>
+              <option>Usuario #1</option>
+              <option>Usuario #2</option>
+              <option>Usuario #3</option>
+            </select>
+          </div>
+        </div>
+        <!-- /Row -->
+         <!-- Row -->
+        <div class="row mt-5">
+          <div class="col">
+            <label>Quien aprueba:</label>
+          </div>
+          <div class="col">
+            <label>Quien puede visualizar:</label>
+          </div>
+          <div class="col">
+            <label>Quien puede imprimir:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col">
+            <select class="form-control">
+              <option>Selecciona un usuario...</option>
+              <option>Usuario #1</option>
+              <option>Usuario #2</option>
+              <option>Usuario #3</option>
+            </select>
+          </div>
+          <div class="col">
+            <select class="form-control">
+              <option>Selecciona un usuario...</option>
+              <option>Usuario #1</option>
+              <option>Usuario #2</option>
+              <option>Usuario #3</option>
+            </select>
+          </div>
+          <div class="col">
+            <select class="form-control">
+              <option>Selecciona un usuario...</option>
+              <option>Usuario #1</option>
+              <option>Usuario #2</option>
+              <option>Usuario #3</option>
+            </select>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-5">
+          <div class="col">
+            <label>Objetivo del documento:</label>
+          </div>
+          <div class="col">
+            <label>Carga de documento de apoyo:</label>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <textarea class="form-control" rows="3" placeholder="..."></textarea>
+            </div>
+          </div>
+          <div class="col">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="subirArchivo">
+              <label class="custom-file-label" for="subirArchivo">Subir archivo...</label>
+            </div>
+          </div>
+        </div>
+        <!-- /Row -->
+        <!-- Row -->
+        <div class="row mt-3">
+          <div class=" col-auto">
+            <button class="btn btn-patsy" id="enviar">Enviar solicitud</button>
+          </div>
+        </div>
+        <!-- /.Row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer"></footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="../assets/all/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="../assets/all/jquery-ui/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="../assets/all/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="../assets/all/sweetalert2/sweetalert2.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../assets/all/js/adminlte.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="../assets/all/js/core.js"></script>
+<script src="../assets/solicitud_documento/js/core.js"></script>
+
+
+
+</body>
+</html>
