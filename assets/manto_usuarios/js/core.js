@@ -33,6 +33,70 @@ function new_function(){
     });
 }
 
+function upload_user_firma(email){
+    //alert('haciendo upload de la photo');
+    var form_data = new FormData();                  
+    var totalfiles = document.getElementById('firma').files.length;
+    var e = email;
+//alert(e);
+       for (var index = 0; index < totalfiles; index++) {
+          form_data.append("firma[]", document.getElementById('firma').files[index]);
+       }
+       form_data.append("email",e);
+       form_data.append("option","firma");
+        //console.log(form_data);             
+    $.ajax({
+        url: '../assets/all/php/upload_user_photo.php', 
+        dataType: 'text',  
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,                         
+        type: 'post',
+        success: function(php_script_response){
+            if (php_script_response == "No files") {
+                alert('No se logro guardar tu firma!!!');
+                window.location.replace('dashboard.html');
+            }else{
+                //alert('Tu foto fue modificada!');
+                //window.location.replace('dashboard.html');
+            }
+        }
+    });
+}
+
+function upload_user_photo(email){
+    //alert('haciendo upload de la photo');
+    var form_data = new FormData();                  
+    var totalfiles = document.getElementById('foto').files.length;
+    var e = email;
+//alert(e);
+       for (var index = 0; index < totalfiles; index++) {
+          form_data.append("foto[]", document.getElementById('foto').files[index]);
+       }
+       form_data.append("email",e);
+       form_data.append("option","foto");
+        //console.log(form_data);             
+    $.ajax({
+        url: '../assets/all/php/upload_user_photo.php', 
+        dataType: 'text',  
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,                         
+        type: 'post',
+        success: function(php_script_response){
+            if (php_script_response == "No files") {
+                alert('No se logro guardar tu imagen!!!');
+                window.location.replace('dashboard.html');
+            }else{
+                //alert('Tu foto fue modificada!');
+                //window.location.replace('dashboard.html');
+            }
+        }
+    });
+}
+
 function lista_cambiar_estado(Id, isChecked) {
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
@@ -128,6 +192,8 @@ function create_user() {
     var pass2       = $('#pass2');
     var firma       = $('#firma');
 
+    
+
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
         type: "POST",
@@ -149,6 +215,8 @@ function create_user() {
         dataType: "json",
         success: function (response) {
             if (response.error === '') {
+                upload_user_photo(email.val());
+                upload_user_firma(email.val());
                 alert('Usuario creado correctamente.');
                 nombre.val('');
                 apellido.val('');

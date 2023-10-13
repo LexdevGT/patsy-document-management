@@ -61,7 +61,7 @@
         <a href="../" class="nav-link"><b>Cerrar sesión</b></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link"><b>Alexander Jáuregui</b></a>
+        <a href="#" class="nav-link user-name"><b>...</b></a>
       </li>
     </ul>
   </nav>
@@ -104,12 +104,12 @@
                       </h4>
                     </div>
                     <div id="collapseOne" class="collapse" data-parent="#accordion">
-                      <div class="card-body">
-                        <b>Nombre del documento:</b> Lorem ipsum dolor sit <br>
-                        <b>Dueño del proceso:</b> amet, consectetur adipiscing elit <br>
-                        <b>Tipo de documento:</b> sed do eiusmod<br>
-                        <b>Versión:</b> tempor incididunt ut labore<br>
-                        <b>Código:</b> ut aliquip ex ea commodo
+                      <div class="card-body" id="info-basica">
+                        <b>Nombre del documento:</b> Cargando... <br>
+                        <b>Proceso principal:</b> ... <br>
+                        <b>Tipo de documento:</b> ... <br>
+                        <b>Versión:</b> ... <br>
+                        <b>Código:</b> ...
                       </div>
                     </div>
                   </div>
@@ -123,7 +123,7 @@
         <!-- Row -->
         <div class="row">
           <div class="col text-center mt-3">
-            <h3 >Nombre del proyecto</h3>
+            <h3 id="nombre-proyecto">...|||...</h3>
           </div>
         </div>
         <!-- /Row -->
@@ -147,17 +147,19 @@
                   <th>Aprobó</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="footer-revisar">
                 <tr >
                   <td>Nombre</td>
                   <td>Nombre</td>
                   <td>Nombre</td>
                 </tr>
+                <!--
                 <tr >
                   <td>Puesto</td>
                   <td>Puesto</td>
                   <td>Puesto</td>
                 </tr>
+                -->
                 <tr >
                   <td>Fecha</td>
                   <td>Fecha</td>

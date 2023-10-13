@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Patsy DM | Dashboard</title>
+  <title>Patsy DM | Crear Documento</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="../assets/all/fonts_google_sans_300_400.css">
@@ -11,10 +11,10 @@
   <link rel="stylesheet" href="../assets/all/fontawesome-free/css/all.min.css">
   <!-- iCheck -->
   <link rel="stylesheet" href="../assets/all/icheck-bootstrap/icheck-bootstrap.min.css">
-  <!-- Daterange picker -->
-  <link rel="stylesheet" href="../assets/all/daterangepicker/daterangepicker.css">
-  <!-- summernote -->
-  <link rel="stylesheet" href="../assets/all/summernote/summernote-bs4.min.css">
+ 
+  <!-- Select2 -->
+  <link rel="stylesheet" href="../assets/all/select2/css/select2.min.css">
+  <link rel="stylesheet" href="../assets/all/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="icon" type="image/x-icon" href="../assets/all/favicon.png">
   <link rel="stylesheet" href="../assets/all/css/adminlte.min.css">
@@ -61,7 +61,7 @@
         <a href="../" class="nav-link"><b>Cerrar sesión</b></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link"><b>Alexander Jáuregui</b></a>
+        <a href="#" class="nav-link user-name"><b>...</b></a>
       </li>
     </ul>
   </nav>
@@ -94,7 +94,7 @@
             <label>Nombre del documento</label>
           </div>
           <div class="col">
-            <input class="form-control" type="text" placeholder="Default input">
+            <input class="form-control" type="text" placeholder="Ingrese nombre del documento..." id="nombre">
           </div>
         </div>
         <!-- /.row -->
@@ -104,12 +104,8 @@
             <label>Proceso principal</label>
           </div>
           <div class="col">
-            <select class="form-control">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+            <select class="form-control" id="select_proceso_principal">
+              <option value='0'>Cargando...</option>
             </select>
           </div>
         </div>
@@ -120,12 +116,8 @@
             <label>Otros procesos</label>
           </div>
           <div class="col">
-            <select class="form-control">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+            <select class="select2 form-control" multiple="multiple" id="select_otros_procesos" data-placeholder="Selecciona un proceso principal para que esta lista se llene...">
+              <option>Cargando...</option>
             </select>
           </div>
         </div>
@@ -136,12 +128,8 @@
             <label>Sub proceso</label>
           </div>
           <div class="col">
-            <select class="form-control">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+            <select class="form-control" id="select_subproceso">
+              <option value='0'>Selecciona un proceso principal para que esta lista se llene...</option>
             </select>
           </div>
         </div>
@@ -152,12 +140,8 @@
             <label>Tipo de documento</label>
           </div>
           <div class="col">
-            <select class="form-control">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+            <select class="form-control" id="select_tipo_de_documento">
+              <option value='0'>Cargando...</option>
             </select>
           </div>
         </div>
@@ -168,7 +152,7 @@
             <label>Versión</label>
           </div>
           <div class="col">
-            <input class="form-control" type="text" placeholder="Default input">
+            <input class="form-control" type="text" placeholder="Favor ingresar la Versión del documento..." id="version">
           </div>
         </div>
         <!-- /.row -->
@@ -178,7 +162,7 @@
             <label>Código</label>
           </div>
           <div class="col">
-            <input class="form-control" type="text" placeholder="Default input">
+            <input class="form-control" type="text" placeholder="El código se populara automáticamente luego de elegir el proceso principal y el tipo de proceso..." id="codigo">
           </div>
         </div>
         <!-- /.row -->
@@ -188,7 +172,7 @@
             <label>Alcance</label>
           </div>
           <div class="col">
-            <input class="form-control" type="text" placeholder="Default input">
+            <input class="form-control" type="text" placeholder="Favor introduce el alcance del documento..." id="alcance">
           </div>
         </div>
         <!-- /.row -->
@@ -198,12 +182,8 @@
             <label>Quien elabora</label>
           </div>
           <div class="col">
-            <select class="form-control">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+            <select class="form-control" id="select_quien_elabora">
+              <option>Cargando...</option>
             </select>
           </div>
         </div>
@@ -214,12 +194,8 @@
             <label>Quien revisa</label>
           </div>
           <div class="col">
-            <select class="form-control">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+            <select class="form-control" id="select_quien_revisa">
+              <option>Cargando...</option>
             </select>
           </div>
         </div>
@@ -230,7 +206,7 @@
             <label>Quien aprueba</label>
           </div>
           <div class="col">
-            <select class="form-control">
+            <select class="form-control" id="select_quien_aprueba">
               <option>option 1</option>
               <option>option 2</option>
               <option>option 3</option>
@@ -259,7 +235,7 @@
             <label>Quien puede visualizar</label>
           </div>
           <div class="col">
-            <select class="form-control">
+            <select class="form-control" id="select_quien_visualiza">
               <option>option 1</option>
               <option>option 2</option>
               <option>option 3</option>
@@ -275,7 +251,7 @@
             <label>Quien puede imprimir</label>
           </div>
           <div class="col">
-            <select class="form-control">
+            <select class="form-control" id="select_quien_imprime">
               <option>option 1</option>
               <option>option 2</option>
               <option>option 3</option>
@@ -320,11 +296,8 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="../assets/all/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- daterangepicker -->
-<script src="../assets/all/moment/moment.min.js"></script>
-<script src="../assets/all/daterangepicker/daterangepicker.js"></script>
-<!-- Summernote -->
-<script src="../assets/all/summernote/summernote-bs4.min.js"></script>
+<!-- Select2 -->
+<script src="../assets/all/select2/js/select2.full.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../assets/all/js/adminlte.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->

@@ -81,9 +81,6 @@ function load_privileges() {
         },
         dataType: "json",
         success: function (response) {
-            //console.log(response);
-            //console.log(response.data);
-            //console.log(response.data.length);
             if (response.error === '') {
                 //alert('llego sin errores');
                 /*if (response.data && response.data.length > 0) {*/
@@ -166,4 +163,11 @@ function sidebar(){
     $('.nav-link').removeClass('active');
     $('.nav-link').find('i.manto_privilegios').parent().addClass( "active" );
 }
+
+
+
+
+
+
+
 

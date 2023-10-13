@@ -90,6 +90,30 @@
 		    case 'login':
 		        i_li_Function(); 
 		        break;
+		    case 'cargar_barra_izquierda':
+		        coreJS_cbi_Function(); 
+		        break;
+		    case 'cargar_proceso_principal_select':
+		        cd_cpps_Function(); 
+		        break;
+		    case 'cargar_select_tipo_de_documentos':
+		        cd_cstdd_Function(); 
+		        break;
+		    case 'cargar_select_usuarios':
+		        cd_csu_Function(); 
+		        break;
+		    case 'crear_documento':
+		        cd_cd_Function(); 
+		        break;
+		    case 'cargar_lista_documentos':
+		        r_cld_Function(); 
+		        break;
+		    case 'cargar_informacion_basica_documento':
+		        r_cibd_Function(); 
+		        break;
+		    case 'cargar_informacion_footer_documento':
+		        r_cifd_Function(); 
+		        break;
 		}
 	}
 
@@ -114,6 +138,447 @@
 		$jsondata['error']   = $error;
 		echo json_encode($jsondata);
 	}
+
+	function r_cifd_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    if(isset($_POST['id'])){
+
+	    	$id = $_POST['id'];
+	    //error_log("id que me enviaron: $id");
+	    	$query = "
+		    		SELECT 
+						CONCAT(elabora.nombre,' ',elabora.apellido) AS quien_elabora,
+						fecha,
+						CONCAT(revisa.nombre,' ',revisa.apellido) AS quien_revisa,
+						fecha_revision,
+						CONCAT(aprueba.nombre,' ',aprueba.apellido) AS quien_aprueba,
+						fecha_aprobacion
+					FROM documentos
+					INNER JOIN users AS elabora
+					ON documentos.quien_elabora = elabora.id
+					INNER JOIN users AS revisa
+					ON documentos.quien_revisa = revisa.id
+					INNER JOIN users AS aprueba
+					ON documentos.quien_aprueba = aprueba.id
+					WHERE documentos.id = $id
+		    ";
+
+		    // Ejecuta la consulta y verifica si se ejecutó correctamente
+		    $execute_query = $conn->query($query);
+
+		    if ($execute_query) {
+		        // Obtenemos los resultados
+		        $rows = array();
+		        while ($row = $execute_query->fetch_array()) {
+		        
+		            $quien_elabora  = $row['quien_elabora'];
+		            $fecha_elabora  = $row['fecha'];
+		            $quien_revisa  	= $row['quien_revisa'];
+		            $fecha_revision = $row['fecha_revision'];
+		            $quien_aprueba  = $row['quien_aprueba'];
+					$fecha_aprueba  = $row['fecha_aprobacion'];	
+
+					if($quien_elabora == null){
+						$quien_elabora = '';
+					}	            
+		            
+					if($fecha_elabora == null){
+						$fecha_elabora = '';
+					}	      
+
+					if($quien_revisa == null){
+						$quien_revisa = '';
+					}	             
+
+					if($fecha_revision == null){
+						$fecha_revision = '';
+					}	
+
+					if($quien_aprueba == null){
+						$quien_aprueba = '';
+					}	              
+
+
+					if($fecha_aprueba == null){
+						$fecha_aprueba = '';
+					}	                           
+		            // Agrega los resultados al arreglo $rows
+		            $data_rows[] = array(
+		                'elabora' 			=> $quien_elabora,
+		                'fecha_elabora' 	=> $fecha_elabora,
+		                'revisa'		 	=> $quien_revisa,
+		                'fecha_revisa'		=> $fecha_revision,
+		                'aprueba'		 	=> $quien_aprueba,
+		                'fecha_aprueba'	 	=> $fecha_aprueba
+		            );
+		        }
+
+		        // Agrega los resultados al arreglo jsondata
+		        $jsondata['data'] = $data_rows;
+		        $message = 'Consulta ejecutada con éxito.';
+		    } else {
+		        // La consulta falló, establece un mensaje de error
+		        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+		    }
+	    }else{
+	    	$error = "No se encontro ningun ID.";
+	    	//error_log('No tengo ID');
+	    }
+
+	    
+
+	    // Agrega el mensaje y el error al arreglo jsondata
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function r_cibd_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    if(isset($_POST['id'])){
+
+	    	$id = $_POST['id'];
+	    //error_log("id que me enviaron: $id");
+	    	$query = "
+		    		SELECT d.nombre,d.proceso_principal,td.tipo_de_documento,d.version,d.codigo
+					FROM documentos d
+					INNER JOIN tipo_de_documentos td
+					ON td.id = d.id_tipo_documento
+					WHERE d.id = $id
+		    ";
+
+		    // Ejecuta la consulta y verifica si se ejecutó correctamente
+		    $execute_query = $conn->query($query);
+
+		    if ($execute_query) {
+		        // Obtenemos los resultados
+		        $rows = array();
+		        while ($row = $execute_query->fetch_array()) {
+		        
+		            $nombre_documento  = $row['nombre'];
+		            $proceso_principal = $row['proceso_principal'];
+		            $tipo_de_documento = $row['tipo_de_documento'];
+		            $version           = $row['version'];
+		            $codigo_documento  = $row['codigo'];
+		            
+		            // Agrega los resultados al arreglo $rows
+		            $data_rows[] = array(
+		                'nombre' 			=> $nombre_documento,
+		                'proceso_principal' => $proceso_principal,
+		                'tipo_de_documento' => $tipo_de_documento,
+		                'version' 			=> $version,
+		                'codigo' 			=> $codigo_documento
+		            );
+		        }
+
+		        // Agrega los resultados al arreglo jsondata
+		        $jsondata['data'] = $data_rows;
+		        $message = 'Consulta ejecutada con éxito.';
+		    } else {
+		        // La consulta falló, establece un mensaje de error
+		        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+		    }
+	    }else{
+	    	$error = "No se encontro ningun ID.";
+	    	//error_log('No tengo ID');
+	    }
+
+	    
+
+	    // Agrega el mensaje y el error al arreglo jsondata
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function r_cld_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    $query = "
+	    		SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud
+				FROM documentos d
+				INNER JOIN status_documentos sd
+				ON sd.id = d.status
+				WHERE status_revision = 0
+	    ";
+
+	    // Ejecuta la consulta y verifica si se ejecutó correctamente
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        // La consulta se ejecutó con éxito, ahora puedes obtener los resultados
+	        $rows = array();
+	        while ($row = $execute_query->fetch_array()) {
+	        	$id_documento      = $row['id'];
+	            $nombre_documento  = $row['nombre'];
+	            $codigo_documento  = $row['codigo'];
+	            $tipo_de_solicitud = $row['tipo_de_solicitud'];
+	            
+	            // Agrega los resultados al arreglo $rows
+	            $data_rows[] = array(
+	            	'id'				=> $id_documento,
+	                'nombre' 			=> $nombre_documento,
+	                'codigo' 			=> $codigo_documento,
+	                'tipo_de_solicitud' => $tipo_de_solicitud
+	            );
+	        }
+
+	        // Agrega los resultados al arreglo jsondata
+	        $jsondata['data'] = $data_rows;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        // La consulta falló, establece un mensaje de error
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    // Agrega el mensaje y el error al arreglo jsondata
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function cd_cd_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		
+
+		// Verifica si se ha subido un archivo y no hay errores en la carga
+	    if (isset($_FILES["archivo"]) && $_FILES["archivo"]["error"] == UPLOAD_ERR_OK) {
+	        // Obtén los datos del formulario
+	        $nombre = $_POST["nombre"];
+	        $proceso_principal = $_POST["proceso_principal"];
+	        $otros_procesos = $_POST["otros_procesos"];
+	        $subproceso = $_POST["subproceso"];
+	        $id_tipo_documento = $_POST["tipo_documento"];
+	        $version = $_POST["version"];
+	        $codigo = $_POST["codigo"];
+	        $alcance = $_POST["alcance"];
+	        $quien_elabora = $_POST["quien_elabora"];
+	        $quien_revisa = $_POST["quien_revisa"];
+	        $quien_aprueba = $_POST["quien_aprueba"];
+	        $quien_visualiza = $_POST["quien_visualiza"];
+	        $quien_imprime = $_POST["quien_imprime"];
+
+	        // Obtiene la información del archivo
+	        $archivo_nombre = $_FILES["archivo"]["name"];
+	        $archivo_tmp_name = $_FILES["archivo"]["tmp_name"];
+	        $archivo_tamano = $_FILES["archivo"]["size"];
+	        $archivo_tipo = $_FILES["archivo"]["type"];
+
+	        
+	        $ext 		= pathinfo($archivo_nombre, PATHINFO_EXTENSION);
+			$new_name 	= $nombre .'.'. $ext;
+			$valid_ext = array("pdf","docx","doc");
+
+	        // Define la ruta de destino donde se guardará el archivo
+	        //$ruta_destino = "../../../pages/newdocuments/" . $archivo_nombre;
+	        $ruta_destino = "../../../pages/newdocuments/" . $new_name;
+			
+
+			// Verifica si el archivo lleva la extención correcta.
+			if (in_array($ext,$valid_ext)){
+				// Mueve el archivo cargado a la ubicación de destino
+		        if (move_uploaded_file($archivo_tmp_name, $ruta_destino)) {
+
+		            // Prepara la consulta SQL para insertar en la tabla documentos
+		            $sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, id_tipo_documento, version, codigo, alcance, quien_elabora, quien_revisa, quien_aprueba, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso', '$id_tipo_documento', '$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, $quien_aprueba, '$ruta_destino', $quien_visualiza, $quien_imprime, 2,0,NOW())";
+
+		            $execute_query = $conn->query($sql);
+
+		            if ($execute_query) {
+		               
+		                $message = "Documento creado exitosamente.";
+		               
+		            } else {
+		                // Error en la preparación de la consulta SQL
+		                $error = "Error en la preparación de la consulta SQL: " . $conn->error;;
+		            }
+
+		        } else {
+		            // Error al mover el archivo
+		            $error = "Error al mover el archivo a la ubicación de destino.";
+		        }
+			}else{
+				$error = "El archivo no es PDF ni Word";
+			}
+	    } else {
+	        // No se ha subido ningún archivo o hubo un error en la carga
+	        $error = "No se ha subido ningún archivo o hubo un error en la carga.";
+	    }
+	
+
+		// Devuelve la respuesta en formato JSON
+		header("Content-type: application/json");
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+		
+	}
+
+	function cd_csu_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		$html 	  = '';
+
+		$query = "SELECT id,nombre,apellido FROM users 
+				  WHERE status = 1;
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$html .= "<option value='0'>Selecciona un usuario...</option>";
+			while($row = $execute_query->fetch_array()){
+				$id 	= $row['id'];
+				$nombre = $row['nombre'] . ' ' . $row['apellido'];
+				$html .= "<option value='$id'>$nombre</option>";	
+			}
+			
+		}else{
+			$error = 'Error cargando los usuarios de base de datos: '.$conn->error;
+		}
+
+		$jsondata['html'] 		= $html;
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function cd_cstdd_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		$html 	  = '';
+
+		$query = "SELECT id,tipo_de_documento FROM tipo_de_documentos 
+				  WHERE status = 1;
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$html .= "<option value='0'>Selecciona un tipo de documento...</option>";
+			while($row = $execute_query->fetch_array()){
+				$id 	= $row['id'];
+				$nombre = $row['tipo_de_documento'];
+				$html .= "<option value='$id'>$nombre</option>";	
+			}
+			
+		}else{
+			$error = 'Error cargando los tipos de documentos de base de datos: '.$conn->error;
+		}
+
+		$jsondata['html'] 		= $html;
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function cd_cpps_Function() {
+		$jsondata 	= array();
+		$error 		= '';
+		$html 		= '';
+		$folder_count = '';
+
+		$dir_var = isset($_POST['directory']) ? $_POST['directory'] : '';
+
+		if ($dir_var == '') {
+			$dir = '../../../pages/documents/';
+			$html = "<option value='0'>Elige un proceso...</option>";
+		} else {
+			$dir = '../../../pages/documents/' . $dir_var;
+			$html = "<option value='0'>Elige un subproceso...</option>";
+		}
+
+		$folders = scandir($dir);
+
+		$principal = $_POST['principal']; 
+//error_log("DIR: $dir");
+		foreach ($folders as $folder) {
+//error_log("folder: $folder Principal: $principal");
+			if ($folder !== '.' && $folder !== '..' && $folder <> $principal) {
+				$folder_count++;
+				$subfolderPath = $dir_var . $folder . '/';
+				$html .= '<option value="'.$folder.'">'.$folder.'</option>';
+			}
+		}
+
+	  //error_log('Contador: '.$folder_count);
+		if ($folder_count<1) {
+			if ($dir_var == '') {
+				$html = "<option>No existen procesos creados...</option>";
+			}else{
+				$html = "<option>No existen subprocesos creados...</option>";
+			}
+		}
+
+		$jsondata['html'] = $html;
+		$jsondata['error'] = $error;
+		echo json_encode($jsondata);
+	}
+
+	function coreJS_cbi_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $data = array();
+
+	   	if(isset($_SESSION['rol_id'])){
+	   		$rol_id = $_SESSION['rol_id'];
+	   		$nombre_usuario = $_SESSION['nombre_u'];
+
+	   		$query = "
+		   		SELECT nombre_opcion_privilegio, path, icon 
+				FROM opciones_privilegios
+				INNER JOIN privilegios p
+				ON opciones_privilegios.id_opcion_privilegio = p.id_privilegio
+				WHERE p.id_rol = $rol_id
+				AND status = 1
+	   		";
+//error_log($query);
+		    $result = $conn->query($query);
+
+		    if ($result) {
+		        while ($row = $result->fetch_assoc()) {
+		            $data[] = array(
+		                'nombre_opcion_privilegio' => $row['nombre_opcion_privilegio'],
+		                'path' => $row['path'],
+		                'icon' => $row['icon']
+		            );
+		        }
+		 		$jsondata['un'] = $nombre_usuario;
+		    } else {
+		        $error = 'Error al cargar los privilegios: ' . $conn->error;
+		    }
+	   	}else{
+	   		$error = 'Necesitas tener acceso, hablar con administración!';
+	   	}
+	    
+
+	    $jsondata['error'] = $error;
+	    $jsondata['data'] = $data;
+
+	    //header('Content-type: application/json');
+//error_log(print_r($jsondata,true));
+	    echo json_encode($jsondata);
+	}
+
+
 
 	function i_li_Function(){
 	    global $conn;
@@ -682,9 +1147,10 @@
 					FROM opciones_privilegios op
 					LEFT JOIN privilegios p ON op.id_opcion_privilegio = p.id_privilegio
 					    AND p.id_rol = $id_rol
+					WHERE op.status = 1
 					ORDER BY id_opcion_privilegio
 				";
-//error_log($query);
+		//error_log($query);
 	    // Ejecuta la consulta y verifica si se ejecutó correctamente
 	    $execute_query = $conn->query($query);
 
