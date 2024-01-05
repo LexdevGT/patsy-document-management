@@ -1,6 +1,6 @@
 $(function(){
 
-    setTimeout(sidebar,500);
+    setTimeout(sidebar,600);
     //sidebar();   
     load_proceso_principal();
     load_tipo_de_documento();
@@ -25,6 +25,12 @@ $(function(){
     $('#select_proceso_principal').change(function(){
         load_otros_procesos();
         load_subprocesos();
+    });
+
+    $('#subirArchivo').change(function(){
+        var fileName = this.files[0].name;
+        $('.custom-file-label').html(fileName);
+        //console.log(fileName);
     });
   
 });
@@ -66,6 +72,8 @@ function crear_documento() {
     var quien_visualiza = $('#select_quien_visualiza').val();
     var quien_imprime = $('#select_quien_imprime').val();
 
+
+
     //alert("Proceso: "+proceso_principal+" tipo documento: " + tipo_documento);
     if(proceso_principal != 0 && tipo_documento != 0){
 
@@ -85,9 +93,15 @@ function crear_documento() {
         // Crea el string con el formato deseado
         var formatoFechaHora = mes + '-' + dia + '-' + año + '_' + hora + '-' + minuto + '-' + segundo;
         //console.log(formatoFechaHora);
+        var siglas_proceso_principal = proceso_principal.substring(0,2);
+        var siglas_tipo_documento = $('#select_tipo_de_documento').find("option:selected").text();
+        //console.log(siglas_tipo_documento);
+        siglas_tipo_documento = siglas_tipo_documento.substring(0,2);
 
-        var codigo = proceso_principal+'-'+tipo_documento+'-'+formatoFechaHora;
-        $('#codigo').val(codigo);
+
+        //var codigo = siglas_proceso_principal+'-'+tipo_documento+'-'+formatoFechaHora;
+        var codigo = siglas_proceso_principal+'-'+siglas_tipo_documento+'-';
+        
 
         // Creando el objeto FormData y agrego los datos del formulario
         var formData = new FormData();
@@ -112,7 +126,7 @@ function crear_documento() {
         // Realiza una solicitud AJAX con el objeto FormData
         $.ajax({
             type: 'POST',
-            url: '../assets/all/php/services.php', // Ruta del script PHP que procesará los datos
+            url: '../assets/all/php/services.php', 
             data: formData,
             processData: false, // Evita que jQuery procese los datos automáticamente
             contentType: false, // Evita que jQuery establezca automáticamente el encabezado Content-Type
@@ -120,8 +134,9 @@ function crear_documento() {
             success: function (response) {
                 if (response.error === '') {
                     // Los datos se han guardado correctamente, puedes realizar acciones adicionales si es necesario
+                    $('#codigo').val(response.codigo);
                     alert('Documento creado exitosamente');
-                    alert('El código de tu documento creado es el siguiente: '+codigo+' por si deseas apuntarlo!');
+                    alert('El código de tu documento creado es el siguiente: '+response.codigo+' por si deseas apuntarlo!');
                     // Vuelve a cargar la página
                     location.reload();
                 } else {
@@ -137,11 +152,11 @@ function crear_documento() {
         alert('Se debe elegir proceso principal y tipo de documento para poder crear el archivo!');
     }
 
-   
 }
 
 
 function load_quien_imprime() {
+    var select_html = "<option value='0'>Selecciona un usuario...</option>";
 
     $.ajax({
         contentType: 'application/x-www-form-urlencoded',
@@ -154,7 +169,10 @@ function load_quien_imprime() {
         success: function (response) {
             if (response.error === '') {
                 $('#select_quien_imprime').empty();
-                $('#select_quien_imprime').html(response.html);
+                $.each(response.html, function(index, info) {
+                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                });
+                $('#select_quien_imprime').html(select_html);
             } else {
                 alert(response.error);
             }
@@ -163,6 +181,7 @@ function load_quien_imprime() {
 }
 
 function load_quien_visualiza() {
+    var select_html = "<option value='0'>Selecciona un usuario...</option>";
 
     $.ajax({
         contentType: 'application/x-www-form-urlencoded',
@@ -175,7 +194,10 @@ function load_quien_visualiza() {
         success: function (response) {
             if (response.error === '') {
                 $('#select_quien_visualiza').empty();
-                $('#select_quien_visualiza').html(response.html);
+                $.each(response.html, function(index, info) {
+                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                });
+                $('#select_quien_visualiza').html(select_html);
             } else {
                 alert(response.error);
             }
@@ -184,6 +206,7 @@ function load_quien_visualiza() {
 }
 
 function load_quien_aprueba() {
+    var select_html = "<option value='0'>Selecciona un usuario...</option>";
 
     $.ajax({
         contentType: 'application/x-www-form-urlencoded',
@@ -196,7 +219,10 @@ function load_quien_aprueba() {
         success: function (response) {
             if (response.error === '') {
                 $('#select_quien_aprueba').empty();
-                $('#select_quien_aprueba').html(response.html);
+                $.each(response.html, function(index, info) {
+                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                });
+                $('#select_quien_aprueba').html(select_html);
             } else {
                 alert(response.error);
             }
@@ -205,6 +231,7 @@ function load_quien_aprueba() {
 }
 
 function load_quien_revisa() {
+    var select_html = "<option value='0'>Selecciona un usuario...</option>";
 
     $.ajax({
         contentType: 'application/x-www-form-urlencoded',
@@ -217,7 +244,10 @@ function load_quien_revisa() {
         success: function (response) {
             if (response.error === '') {
                 $('#select_quien_revisa').empty();
-                $('#select_quien_revisa').html(response.html);
+                $.each(response.html, function(index, info) {
+                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                });
+                $('#select_quien_revisa').html(select_html);
             } else {
                 alert(response.error);
             }
@@ -226,6 +256,7 @@ function load_quien_revisa() {
 }
 
 function load_quien_elabora() {
+    var select_html = "<option value='0'>Selecciona un usuario...</option>";
 
     $.ajax({
         contentType: 'application/x-www-form-urlencoded',
@@ -238,7 +269,11 @@ function load_quien_elabora() {
         success: function (response) {
             if (response.error === '') {
                 $('#select_quien_elabora').empty();
-                $('#select_quien_elabora').html(response.html);
+                //$('#select_quien_elabora').html(response.html);
+                $.each(response.html, function(index, info) {
+                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                });
+                $('#select_quien_elabora').html(select_html);
             } else {
                 alert(response.error);
             }
@@ -247,6 +282,7 @@ function load_quien_elabora() {
 }
 
 function load_tipo_de_documento() {
+    var select_html = "<option value='0'>Selecciona un tipo de documento...</option>";
 
     $.ajax({
         contentType: 'application/x-www-form-urlencoded',
@@ -259,7 +295,10 @@ function load_tipo_de_documento() {
         success: function (response) {
             if (response.error === '') {
                 $('#select_tipo_de_documento').empty();
-                $('#select_tipo_de_documento').html(response.html);
+                $.each(response.html, function(index, info) {
+                    select_html += "<option value='"+info.id+"'>"+info.siglas+'-'+decodeURI(escape(info.nombre))+"</option>";
+                });
+                $('#select_tipo_de_documento').html(select_html);
             } else {
                 alert(response.error);
             }

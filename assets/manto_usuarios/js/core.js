@@ -9,6 +9,71 @@ $(function(){
     $('#enviar').click(function(){
         create_user();
     });
+
+    $('#modificar').click(function(){
+        modificar_usuario();
+    });
+
+    $(document).on('click', '.editar-usuario', function (event) {
+        event.preventDefault();
+        var userId = $(this).data('id');
+        var inputs = new Array('nombre','apellido','email');
+        var selects = new Array('region_id','sucursal_id','rol_id','status');
+       
+        // Hacer una solicitud AJAX para obtener los datos del usuario específico
+        $.ajax({
+            type: "POST",
+            url: "../assets/all/php/services.php",
+            data: {
+                option: 'obtener_datos',
+                id: userId,
+                selects,
+                inputs,
+                tabla:'users'
+            },
+            dataType: "json",
+            success: function (r) {
+                if (r.error === '') {
+                    // Recorre los datos y construye la información
+                    $.each(r.message, function (index, data) {
+                        //console.log(index);
+                        if (index == 'nombre') {
+                            $('#nombre').val(data);
+                        }
+                        if (index == 'apellido') {
+                            $('#apellido').val(data);
+                        }
+                        if (index == 'email') {
+                            $('#email').val(data);
+                        }
+                        if (index == 'region_id') {
+                            var region_id = data;
+                            fill_select(region_id,'select_region','region');
+                        }
+                        if (index == 'sucursal_id') {
+                            var sucursal_id = data;
+                            fill_select(sucursal_id,'select_sucursal','sucursal');
+                        }
+                        if (index == 'rol_id') {
+                            var rol_id = data;
+                            fill_select(rol_id,'select_rol','roles');
+                        }
+                    });
+                    $('#pass1').val('');
+                    $('#pass2').val('');
+                    $('#email').prop("disabled",true);
+                    $('#select_estatus').prop("disabled",true);
+                    $('#firma').prop("disabled",true);
+                    $('#foto').prop("disabled",true);
+                    $('#modificar').show();
+                    $('#enviar').hide();
+
+                } else {
+                    alert('Error al obtener los datos del usuario: ' + response.error);
+                }
+            }
+        });
+    });
   
 });
 
@@ -17,7 +82,7 @@ function new_function(){
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
         type: "POST",
-        url: "../assets/php/services.php",
+        url: "../assets/all/php/services.php",
         data: ({
             option: 'security'                   
         }),
@@ -27,7 +92,71 @@ function new_function(){
                 /* No code */
             }else{
                 alert(r.error);
-                window.location.replace('../dashboard.html');
+                window.location.replace('dashboard.html');
+            }
+        }    
+    });
+}
+
+function modificar_usuario(){
+    
+    var nombre = $('#nombre').val();
+    var apellido = $('#apellido').val();
+    var select_region = $('#select_region').val();
+    var select_sucursal = $('#select_sucursal').val();
+    var select_rol = $('#select_rol').val();
+    var pass1 = $('#pass1').val();
+    var pass2 = $('#pass2').val();
+    var email = $('#email').val();
+
+    $.ajax({
+        contentType: "application/x-www-form-urlencoded",
+        type: "POST",
+        url: "../assets/all/php/services.php",
+        data: ({
+            option: 'modificar_usuario',
+            nombre,
+            apellido,
+            select_region,
+            select_sucursal,
+            select_rol,
+            pass1,
+            pass2,
+            email
+        }),
+        dataType: "json",        
+        success: function(r) {                                                   
+            if(r.error == ''){
+                alert(r.message);
+                window.location.reload();
+            }else{
+                alert(r.error);
+                window.location.replace('dashboard.html');
+            }
+        }    
+    });
+}
+
+function fill_select(search,html_id,table){
+    
+    $.ajax({
+        contentType: "application/x-www-form-urlencoded",
+        type: "POST",
+        url: "../assets/all/php/services.php",
+        data: ({
+            option: 'datos_select',
+            buscar: search,
+            html_id,
+            tabla:table                   
+        }),
+        dataType: "json",        
+        success: function(r) {                                                   
+            if(r.error == ''){
+                $('#'+html_id).empty();
+                $('#'+html_id).html(r.message);
+            }else{
+                alert(r.error);
+                window.location.replace('dashboard.html');
             }
         }    
     });
@@ -144,8 +273,10 @@ function load_list() {
                     $.each(r.data, function (index, usuario) {
                         var row = $('<tr>');
                         row.append('<td>' + (usuario.id) + '.</td>');
-                        row.append('<td>' + usuario.nombre + ' ' + usuario.apellido + '</td>');
+                        //row.append('<td>' + usuario.nombre + ' ' + usuario.apellido + '</td>');
+                        row.append('<td><a href="#" class="editar-usuario" data-id="' + usuario.id + '">' + usuario.nombre + ' ' + usuario.apellido + '</a></td>');
                         row.append('<td>' + usuario.email + '</td>');
+                        row.append('<td>' + usuario.nombre_rol + '</td>');
 
                         // Crea el switch con el estado adecuado
                         var switchHtml = '<div class="form-group">' +

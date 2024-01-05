@@ -75,8 +75,8 @@ function load_list() {
                     $.each(r.data, function (index, tipo_docto) {
                         var row = $('<tr>');
                         row.append('<td>' + (tipo_docto.id) + '.</td>');
-                        row.append('<td>' + tipo_docto.nombre + '</td>');
-
+                        row.append('<td>' + decodeURI(escape(tipo_docto.nombre)) + '</td>');
+                        row.append('<td>' + decodeURI(escape(tipo_docto.siglas)) + '</td>');
                         // Crea el switch con el estado adecuado
                         var switchHtml = '<div class="form-group">' +
                             '<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">' +
@@ -103,13 +103,17 @@ function load_list() {
             } else {
                 alert(r.error);
             }
+        },
+        beforeSend: function(xhr) {
+            xhr.overrideMimeType('text/html;charset=ISO-8859-1');
         }
     });
 }
 
 function create_tipo_docto() {
 
-    var nombre_tipo_docto = $('#tipo_documento');
+    var nombre_tipo_docto   = $('#tipo_documento');
+    var siglas              = $('#siglas'); 
 
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
@@ -117,13 +121,15 @@ function create_tipo_docto() {
         url: "../assets/all/php/services.php",
         data: {
             option: 'crear_tipo_docto',
-            nombre: nombre_tipo_docto.val()
+            nombre: nombre_tipo_docto.val(),
+            siglas: siglas.val()
         },
         dataType: "json",
         success: function (response) {
             if (response.error === '') {
                 alert('Tipo de documento creado correctamente.');
                 nombre_tipo_docto.val('');
+                siglas.val('');
                 load_list();
             } else {
                 alert('Error al crear el tipo de documento: ' + response.error);

@@ -1,8 +1,15 @@
-
 <?php
+//error_log('Reconoce PHP');
 	session_start();
 	date_default_timezone_set('America/Guatemala');
+	header('Content-Type: application/json; charset=ISO-8859-1');
+	
 	require_once('connect.php');
+	require '../vendor/autoload.php';
+	use setasign\Fpdi\Fpdi;
+	use PhpOffice\PhpWord\IOFactory;
+	use Mpdf\Mpdf;
+
 
 
 	if(isset($_POST['option'])){
@@ -114,6 +121,45 @@
 		    case 'cargar_informacion_footer_documento':
 		        r_cifd_Function(); 
 		        break;
+		    case 'cargar_documento_word':
+		    	r_cdw_Function();
+		    	break;
+		   	case 'guardar_comentario_rechazo':
+		    	r_gcr_Function();
+		    	break;
+		    case 'cambio_estatus_documento':
+		    	r_ced_Function();
+		    	break;
+		    case 'cargar_estatus_documentos':
+		    	sd_ced_Function();
+		    	break;
+		    case 'cargar_document_name':
+		    	sddi_cdn_Function();
+		    	break;
+		    case 'history':
+		    	sddi_h_Function();
+		    	break;
+		    case 'cambiar_estatus_documento':
+		    	sddi_ced_Function();
+		    	break;
+		    case 'cargar_lista_control_cambios':
+		    	cdc_clcc_Function();
+		    	break;
+		    case 'cargar_procesos_obsoletos':
+		    	o_cpo_Function();
+		    	break;
+		    case 'load_folders_obsoletos':
+		    	o_lfo_Function();
+		    	break;
+		    case 'obtener_datos':
+		    	mu_od_Function();
+		    	break;
+		    case 'datos_select':
+		    	mu_ds_Function();
+		    	break;
+		    case 'modificar_usuario':
+		    	mu_mu_Function();
+		    	break;
 		}
 	}
 
@@ -139,6 +185,883 @@
 		echo json_encode($jsondata);
 	}
 
+	function mu_mu_Function(){
+		global $conn;
+		$jsondata 		 = array();
+		$error 	  		 = '';
+		$message  		 = '';
+		$nombre 		 = $_POST['nombre'];
+		$apellido 		 = $_POST['apellido'];
+		$select_region 	 = $_POST['select_region'];
+		$select_sucursal = $_POST['select_sucursal'];
+		$select_rol		 = $_POST['select_rol'];
+		$pass1 			 = $_POST['pass1'];
+		$pass2 			 = $_POST['pass2'];
+		$email 			 = $_POST['email'];
+
+		if(($pass1 == $pass2) && ($pass1 != '')){
+			
+			$query = "
+				UPDATE users
+				SET nombre = '$nombre',
+				apellido = '$apellido',
+				region_id = $select_region,
+				sucursal_id = $select_sucursal,
+				rol_id = $select_rol,
+				password = md5('$pass1')
+				WHERE email = '$email'
+				 ";
+		}else{
+			$query = "
+				UPDATE users
+				SET nombre = '$nombre',
+				apellido = '$apellido',
+				region_id = $select_region,
+				sucursal_id = $select_sucursal,
+				rol_id = $select_rol
+				WHERE email = '$email'
+				 ";
+		}
+
+		//error_log($query);
+		
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$message = 'Usuario modificado';
+		}else{
+			$error = 'Error cargando los roles de base de datos: '.$conn->error;
+		}
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function mu_ds_Function(){
+		global $conn;
+		$jsondata 		= array();
+		$error 	  		= '';
+		$message  		= '';
+		$search 		= $_POST['buscar'];
+		$html_id 		= $_POST['html_id'];
+		$table 			= $_POST['tabla'];
+		$fill_search	= '';
+		$clausula 		= '';
+		$html 			= '';
+
+		if ($table == 'region') {
+			$fill_search = 'id_region';
+			$clausula = 'status_region';
+		}
+
+		if ($table == 'sucursal') {
+			$fill_search = 'id';
+			$clausula = 'status';
+		}
+
+		if ($table == 'roles') {
+			$fill_search = 'id_rol';
+			$clausula = 'status_rol';
+		}
+
+		if($fill_search <> '' || $clausula <> ''){
+			$query = "
+				SELECT *
+					FROM $table
+					WHERE $clausula = 1
+					ORDER BY CASE 
+					    WHEN $fill_search = $search THEN 0
+					    ELSE 1
+					END;
+					 ";
+			$execute_query = $conn->query($query);
+			//error_log($query);
+			if($execute_query){
+				//$data_rows = $execute_query->fetch_array();
+				while($row = $execute_query->fetch_array()){
+					foreach ($row as $key => $value) {
+						if (!is_numeric($key)) {
+							$data_rows[] = array(
+								$key => $value
+							);
+						}
+						
+					}
+				}
+			}else{
+				$error = 'Error cargando los roles de base de datos: '.$conn->error;
+			}
+		}
+		
+
+		if ($table == 'region') {
+			$c = 1;
+			foreach ($data_rows as $key => $value) {
+				//error_log(print_r($value,true));
+				
+				if (isset($value['id_region'])) {
+					if ($c == 1) {
+						$html .= "<option value='".$value['id_region']."' selected>"; 
+					}else{
+						$html .= "<option value='".$value['id_region']."'>"; 
+					}
+					$c++;	
+				}
+				if (isset($value['nombre_region'])) {
+					$html .= $value['nombre_region']."</option>"; 
+				}
+			}
+		}
+
+		if ($table == 'sucursal') {
+			$c = 1;
+			foreach ($data_rows as $key => $value) {
+				//error_log(print_r($value,true));
+				
+				if (isset($value['id'])) {
+					if ($c == 1) {
+						$html .= "<option value='".$value['id']."' selected>"; 
+					}else{
+						$html .= "<option value='".$value['id']."'>"; 
+					}
+					$c++;	
+				}
+				if (isset($value['nombre'])) {
+					$html .= $value['nombre']."</option>"; 
+				}
+			}
+		}
+
+		if ($table == 'roles') {
+			$c = 1;
+			foreach ($data_rows as $key => $value) {
+				//error_log(print_r($value,true));
+				
+				if (isset($value['id_rol'])) {
+					if ($c == 1) {
+						$html .= "<option value='".$value['id_rol']."' selected>"; 
+					}else{
+						$html .= "<option value='".$value['id_rol']."'>"; 
+					}
+					$c++;	
+				}
+				if (isset($value['nombre_rol'])) {
+					$html .= $value['nombre_rol']."</option>"; 
+				}
+			}
+		}
+
+		$jsondata['message'] = $html;
+		$jsondata['error']   = $error;
+
+		//error_log(print_r($jsondata,true));
+		echo json_encode($jsondata);
+	}
+
+	function mu_od_Function(){
+		global $conn;
+		$jsondata 	= array();
+		$error 	  	= '';
+		$message  	= '';
+		$selects 	= $_POST['selects'];
+		$inputs 	= $_POST['inputs'];
+		$tabla 		= $_POST['tabla'];
+		$search 	= $_POST['id'];
+		$campos_txt = '';
+
+		if ($selects>0 || $inputs>0) {
+			$campos = array_merge($inputs,$selects);
+			//error_log(print_r($campos,true));
+			foreach ($campos as $key => $value) {
+				$campos_txt .= $value . ',';  
+			}
+			$campos_txt = substr($campos_txt, 0,-1);
+		}
+
+		$query = "SELECT $campos_txt 
+				  FROM $tabla 
+				  WHERE id = $search;
+				 ";
+		 
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$rows = $execute_query->fetch_array();
+			$keys = explode(',', $campos_txt);
+			//error_log(print_r($keys,true));
+			//error_log(print_r($row,true));
+			//error_log(count($keys));
+			for ($i=0; $i <= count($keys)-1; $i++) { 
+				$key = $keys[$i];
+				$value = $rows[$i];
+				// Agrega los resultados al arreglo $rows
+	            $data_rows[$key] = $value;
+			}
+		}else{
+			$error = 'Error cargando los roles de base de datos: '.$conn->error;
+		}
+		
+		//error_log(print_r($data_rows,true));
+		$jsondata['message'] = $data_rows;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function o_lfo_Function() {
+	    global $conn;
+	    $html = [];
+	    $error = '';
+	    $origen = $_POST['origen'];
+
+	    // Verificar si se proporciona el nombre de la carpeta
+	    if (isset($_POST['folderName'])) {
+	        $folderName = $_POST['folderName'];
+	//error_log("FOLDER NAME: $folderName");
+	        // Ajusta la ruta de la carpeta según tu estructura
+			if ($folderName != 'start') {
+				$folderPath = "../../../pages/$origen/$folderName";
+			}else{
+				$folderPath = "../../../pages/$origen/";
+			}
+	//error_log("FOLDER PATH: $folderPath");
+	        // Obtener el contenido de la carpeta
+	        $contenido = scandir($folderPath);
+	//error_log(print_r($contenido,true));
+
+	        // Filtrar archivos y carpetas ocultos
+	        $contenido_visible = array_filter($contenido, function ($item) {
+	            return !in_array($item, ['.', '..']);
+	        });
+
+	        // Extraer información sobre el tipo de elemento y generar vista previa
+	        foreach ($contenido_visible as $item) {
+	            $tipo = is_dir($folderPath .'/'. $item) ? 'folder' : 'file';
+	            
+	            //error_log("IS DIR: $folderPath / $item");
+	            //error_log("TIPO: $tipo");
+
+	            if ($tipo === 'file') {
+	                $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
+
+	                if ($extension === 'docx') {
+	                    $preview = generateWordPreview($folderPath . $item);
+	                } elseif ($extension === 'pdf') {
+	                    $preview = generatePdfPreview($folderPath . $item);
+	                } else {
+	                    $preview = null;
+	                }
+
+	                // Agregar el enlace de descarga
+                	$downloadLink = "<a href='#' class='download-link' data-path='$item'>Descargar</a>";
+	            } else {
+	                $preview = null;
+	                $downloadLink = null;
+	            }
+
+	            //$html[] = ['name' => $item, 'type' => $tipo, 'preview' => $preview, 'downloadLink' => $downloadLink];
+	            $html[] = ['name' => $item, 'type' => $tipo, 'preview' => $preview, 'downloadLink' => $folderPath.'/'.$item];
+	        }
+	    } else {
+	        $error = 'No se proporcionó el nombre de la carpeta.';
+    	}
+
+	    $jsondata['html'] = $html;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function moverArchivo($id,$solicitud) {
+		global $conn;
+	
+		switch($solicitud){
+			case 9:
+				$carpetaDestino = "../../../pages/documents/";
+				$txt = 'oficial';
+				break;
+			case 4:
+				$carpetaDestino = "../../../pages/obsoletos/";
+				$txt = 'obsoleto';
+				break;
+		}
+		
+		// Buscar ruta de origen en la base de datos
+		$query_search_origen = "
+			SELECT path_documento,proceso_principal,sub_proceso
+			FROM documentos
+			WHERE id = $id
+		";
+
+		$execute_query 	= $conn->query($query_search_origen);
+		$row_query 		= $execute_query->fetch_array();
+		$archivoOrigen 	= $row_query['path_documento'];
+		$proceso 		= $row_query['proceso_principal'];
+		$subproceso 	= $row_query['sub_proceso'];
+
+		//error_log("Archivo Origen: ".$archivoOrigen);
+
+		// Agrega a la ruta destino el proceso y subproceso donde se guardara el archivo revisado
+		if($subproceso != 'No existen subprocesos creados...'){
+			$carpetaDestino .= "$proceso/$subproceso/";
+		}else{
+			$carpetaDestino .= "$proceso/";
+		}
+
+		if (!file_exists($carpetaDestino)) {
+		    mkdir($carpetaDestino, 0777, true);
+		}
+
+	    // Verificar si el archivo de origen existe
+	    if (file_exists($archivoOrigen)) {
+	        // Construir la ruta de destino
+	        $rutaDestino = rtrim($carpetaDestino, '/') . '/';
+	        //error_log("Destino: $rutaDestino");
+
+	        // Si se proporciona un nuevo nombre, usarlo; de lo contrario, mantener el nombre original
+	        $nombreArchivo = basename($archivoOrigen);
+
+	        // Construir la ruta completa del archivo de destino
+	        $rutaCompletaDestino = $rutaDestino . $nombreArchivo;
+
+	        // Intentar mover el archivo
+	        if (rename($archivoOrigen, $rutaCompletaDestino)) {
+	        	$query = "
+	        		UPDATE documentos
+	        		SET path_documento = '$rutaCompletaDestino'
+	        		WHERE id = $id
+	        	";
+	        	$execute_query = $conn->query($query);
+	            return "El archivo ahora es un documento $txt!";
+	        } else {
+	            return "Error al intentar mover el archivo.";
+	        }
+	    } else {
+	        return "El archivo de origen no existe.";
+		}
+	
+		echo $resultado;
+		
+	}
+
+	function o_cpo_Function(){
+	    global $conn;
+	    $html           = [];
+	    $message        = '';
+	    $error          = '';
+	    $origen 		= $_POST['origen'];
+	    $ruta_obsoletos = "../../../pages/$origen/";
+
+	    // Obtener el contenido de la carpeta
+	    $contenido = scandir($ruta_obsoletos);
+
+	    // Filtrar archivos y carpetas ocultos
+	    $contenido_visible = array_filter($contenido, function($item) {
+	        return !in_array($item, ['.', '..']);
+	    });
+
+	    // Extraer información sobre el tipo de elemento y generar vista previa
+	    foreach ($contenido_visible as $item) {
+	        $tipo = is_dir($ruta_obsoletos . $item) ? 'folder' : 'file';
+
+	        if ($tipo === 'file') {
+	            $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
+
+	            if ($extension === 'docx') {
+	                // Generar vista previa para Word
+	                $preview = generateWordPreview($ruta_obsoletos . $item);
+	            } elseif ($extension === 'pdf') {
+	                // Generar vista previa para PDF
+	                $preview = generatePdfPreview($ruta_obsoletos . $item);
+	            } else {
+	                // Otro tipo de archivo, no se genera vista previa
+	                $preview = null;
+	            }
+	        } else {
+	            $preview = null;
+	        }
+
+	        $html[] = ['name' => $item, 'type' => $tipo, 'preview' => $preview];
+	    }
+
+	    // Devolver JSON con la información
+	    $jsondata['html']       = $html;
+	    $jsondata['message']    = $message;
+	    $jsondata['error']      = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function generateWordPreview($filePath) {
+	    try {
+	    	
+			$imagePath = '../pages/tmp/word.png';
+	        return $imagePath;
+	        
+	    } catch (\Exception $e) {
+	        return null;
+	    }
+	}
+
+	function generatePdfPreview($filePath) {
+	    try {
+	        $imagePath = '../pages/tmp/pdf.png';
+	        return $imagePath;
+	    } catch (\Exception $e) {
+	        return null;
+	    }
+	}
+
+	function cdc_clcc_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    if (isset($_POST['busqueda'])) {
+	    	$busqueda = $_POST['busqueda'];
+	    	$query = "
+	    		SELECT 
+					id_documento AS codigo,
+					observacion,
+					sd.nombre,
+					date_time,
+					CONCAT(us.nombre,' ',us.apellido) AS solicitante,
+					CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
+				FROM history
+				INNER JOIN status_documentos sd
+				ON history.status = sd.id
+				INNER JOIN users us 
+				ON history.id_solicitante = us.id
+				INNER JOIN users ua
+				ON history.id_aprobar = ua.id
+				WHERE status_history = 1
+				AND id_documento LIKE '%$busqueda%'
+					    ";
+	    }else{
+	    	$query = "
+	    		SELECT 
+					id_documento AS codigo,
+					observacion,
+					sd.nombre,
+					date_time,
+					CONCAT(us.nombre,' ',us.apellido) AS solicitante,
+					CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
+				FROM history
+				INNER JOIN status_documentos sd
+				ON history.status = sd.id
+				INNER JOIN users us 
+				ON history.id_solicitante = us.id
+				INNER JOIN users ua
+				ON history.id_aprobar = ua.id
+				WHERE status_history = 1
+					    ";
+	    }
+	    
+
+	    // Ejecuta la consulta y verifica si se ejecutó correctamente
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        // La consulta se ejecutó con éxito, ahora puedes obtener los resultados
+	        $rows = array();
+	        while ($row = $execute_query->fetch_array()) {
+	        	$codigo      			= $row['codigo'];
+	            $observacion 			= $row['observacion'];
+	            $estado_solicitado  	= $row['nombre'];
+	            $fecha_hora_solicitud 	= $row['date_time'];
+	            $solicitante 			= $row['solicitante'];
+	            $aprueba 				= $row['aprueba'];
+	            
+	            // Agrega los resultados al arreglo $rows
+	            $data_rows[] = array(
+	            	'codigo'				=> $codigo,
+	                'observacion' 			=> $observacion,
+	                'estado_solicitado' 	=> $estado_solicitado,
+	                'fecha_hora_solicitud' 	=> $fecha_hora_solicitud,
+	                'solicitante' 			=> $solicitante,
+	                'aprueba' 				=> $aprueba
+	            );
+	        }
+
+	        // Agrega los resultados al arreglo jsondata
+	        $jsondata['data'] = $data_rows;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        // La consulta falló, establece un mensaje de error
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    // Agrega el mensaje y el error al arreglo jsondata
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function sddi_ced_Function(){
+		global $conn;
+		$jsondata 	= array();
+		$error 	  	= '';
+		$message  	= '';
+		$codigo 	= $_POST['codigo'];
+		$status 	= $_POST['status'];
+
+		$query = "UPDATE documentos
+					SET status = $status, 
+					status_revision = 0
+					WHERE codigo = '$codigo';
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$message = 'Cambio de estatus del documento exitoso!';
+		}else{
+			$error = 'No se pudo aprobar el documento: '.$conn->error;
+		}
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function sddi_h_Function(){
+		global $conn;
+		$jsondata 	 = array();
+		$error 	  	 = '';
+		$message  	 = '';
+		$nombre   	 = '';
+		$solicitante = '';
+		$u 		 	 = $_SESSION['id_u'];
+		
+		if(isset($_POST['observacion'])){
+			$observacion = $_POST['observacion'];
+		}else{
+			$observacion = '';
+			$error .= 'Observacion no ingresada correctamente.   ';
+		}
+
+		if(isset($_POST['codigo'])){
+			$codigo = $_POST['codigo'];
+		}else{
+			$codigo = '';
+			//$error .= 'Código no ingresado correctamente.   ';
+			if(isset($_POST['id'])){
+				$id = $_POST['id'];
+				$query_datos = "SELECT nombre,codigo,quien_aprueba
+					FROM documentos
+					WHERE id = $id
+				";
+//error_log($query_datos);
+				$execute_query = $conn->query($query_datos);
+				while ($fila = $execute_query->fetch_array()){
+					$nombre = $fila['nombre'];
+					$codigo = $fila['codigo'];
+					$q_a 	= $fila['quien_aprueba'];
+
+				}
+	
+			}else{
+				$error .= 'Código no ingresado correctamente.   ';
+			}
+		}
+
+		if(isset($_POST['nombre'])){
+			$nombre = $_POST['nombre'];
+		}else{
+			if ($nombre == ''){
+				$error .= 'Nombre no ingresado correctamente.   ';
+			}
+			
+		}
+
+		if(isset($_POST['solicitante'])){
+			if($_POST['solicitante'] > 0){
+				$solicitante = $_POST['solicitante'];
+			}else{
+				$error .= 'Solicitante no ingresado correctamente.   ';
+			}
+			
+		}else{
+			if($solicitante == ''){
+				$solicitante = $u;
+			}else{
+				$error .= 'Usuario de solicitante no ingresado correctamente.   ';
+			}
+			
+		}
+
+		if(isset($_POST['aprobacion'])){
+			if($_POST['aprobacion'] > 0){
+				$aprobacion = $_POST['aprobacion'];
+			}else{
+				$error .= 'Usuario de aprobación no ingresado correctamente.   ';	
+			}
+		}else{
+			$aprobacion = $q_a;
+		}
+
+		if(isset($_POST['solicitud'])){
+			$solicitud = $_POST['solicitud'];
+		}else{
+			$solicitud = '';
+			$error .= 'Id de solicitud no ingresado correctamente.   ';
+		}
+
+		if(isset($_POST['status'])){
+			$status = $_POST['status'];
+		}else{
+			$status = '';
+			$error .= 'Status de solicitud no ingresado correctamente.   ';
+		}
+
+		$query = "INSERT INTO history (id_documento,observacion,status,status_history,date_time,id_solicitante,id_aprobar)
+					VALUES ('$codigo','$observacion',$status,1,NOW(),$solicitante,$aprobacion);
+				 ";
+		if($error == ''){
+			try{
+				$execute_query = $conn->query($query);
+
+				if($execute_query){
+					$message = 'Solicitud guardada con éxito!';
+				}
+			} catch (Exception $e) {
+				if(strpos($e,'FOREIGN KEY (`id_documento`)') !== false ){
+					$error .= 'Solicitud rechazanda: No existe el código ingresado';
+				}
+				//$error .= 'Solicitud rechazanda: '.$conn->error .'/n';
+				error_log($conn->error);
+			}
+		}
+		
+
+		//error_log("Mensaje: $message Error: $error");
+		
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function sddi_cdn_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		$html 	  = '';
+		$codigo   = $_POST['codigo'];
+
+		$query = "SELECT nombre FROM documentos
+					WHERE codigo LIKE '$codigo%'
+				 ";
+	//error_log($query);
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			
+			while($row = $execute_query->fetch_array()){
+				
+				$nombre = $row['nombre'];
+
+				$data_rows[] = array(
+					'nombre'	=> $nombre
+				);
+			}
+			
+		}else{
+			$error = 'Error cargando el nombre de base de datos: '.$conn->error;
+		}
+
+		$jsondata['data'] 		= $data_rows;
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function sd_ced_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		$html 	  = '';
+
+		$query = "SELECT id,nombre FROM status_documentos
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$html .= "<option value='0'>Selecciona un estatus...</option>";
+			while($row = $execute_query->fetch_array()){
+				$id 	= $row['id'];
+				$nombre = $row['nombre'];
+				$html .= "<option value='$id'>$nombre</option>";	
+
+				$data_rows[] = array(
+					'id' 		=> $id,
+					'nombre'	=> $nombre
+				);
+			}
+			
+		}else{
+			$error = 'Error cargando los estados de base de datos: '.$conn->error;
+		}
+
+		$jsondata['list'] 		= $data_rows;
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function r_ced_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		$id_revision = $_SESSION['id_u'];
+		$rol = $_SESSION['rol_id'];
+		
+		if(isset($_POST['id'])){
+			$id = $_POST['id'];
+		}else{
+			$id = '';
+		}
+
+		if(isset($_POST['solicitud'])){
+			if($rol == 14){
+				$solicitud = 10;
+			}else{
+				$solicitud = $_POST['solicitud'];	
+			}
+			
+		}else{
+			$solicitud = '';
+		}
+
+		$status = $_POST['status'];
+
+		if ($rol == 14) {
+			$query = "UPDATE documentos
+					SET status = $status, 
+					status_revision = 1,
+					fecha_aprobacion = NOW(),
+					quien_aprueba = $id_revision,
+					status = 10
+					WHERE id = $id;
+				 ";
+		}else{
+			$query = "UPDATE documentos
+					SET status = $status, 
+					status_revision = 1,
+					fecha_revision = NOW(),
+					quien_revisa = $id_revision
+					WHERE id = $id;
+				 ";	
+		}
+		
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			//error_log("ROL: $rol");
+			if($solicitud != '' && ($solicitud == 2 || $solicitud == 4 || $solicitud == 10 ) && $rol == 14){
+				$message = moverArchivo($id,$solicitud);
+			}else{
+				$message = 'Cambio de estatus del documento exitoso!';
+			}
+			
+		}else{
+			$error = 'No se pudo aprobar el documento: '.$conn->error;
+		}
+		$jsondata['rol'] = $rol;
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function r_gcr_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+		
+		if(isset($_POST['id'])){
+			$id = $_POST['id'];
+		}else{
+			$id = '';
+		}
+
+		if(isset($_POST['comentario'])){
+			$comentario = $_POST['comentario'];
+		}else{
+			$comentario = '';
+		}
+
+		$query = "INSERT INTO comentarios_rechazo (id_documento,comentario,date_time)
+					VALUES ($id,'$comentario',NOW());
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$message = 'El comentario de rechazo se guardo con éxito!';
+		}else{
+			$error = 'Error rechazando el documento: '.$conn->error;
+		}
+
+		$query = "UPDATE documentos
+					SET status = 5, status_revision = 1
+					WHERE id = $id;
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$message = 'El comentario de rechazo se guardo con éxito!';
+		}else{
+			$error = 'No se pudo rechazar el documento: '.$conn->error;
+		}
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function r_cdw_Function(){
+		//error_log('Entrando');
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+
+		if(isset($_POST['id'])){
+			$id = $_POST['id'];
+			$call_document_path = "
+				SELECT path_documento
+				FROM documentos
+				WHERE id = $id
+			";
+			$query_execute = $conn->query($call_document_path);
+			$result = $query_execute->fetch_array();
+			//$path = $result['path_documento'];
+			$path = realpath($result['path_documento']);
+			
+			//Crear un objeto de PHPWord
+			$phpWord = \PhpOffice\PhpWord\IOFactory::load($path);
+
+			 // Guardar el archivo como HTML temporal
+	        $tempHtmlFile = 'temp.html';
+	        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
+	        $objWriter->save($tempHtmlFile);
+
+	        // Leer el contenido del archivo HTML generado
+	        $htmlContent = file_get_contents($tempHtmlFile);
+	        unlink($tempHtmlFile); // Eliminar el archivo temporal
+
+	        $message = $htmlContent;
+
+	        //error_log($path);
+		}else {
+	        $error = 'No se proporcionó un ID válido.';
+	    }
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
 	function r_cifd_Function(){
 	    global $conn;
 	    $jsondata = array();
@@ -158,11 +1081,11 @@
 						CONCAT(aprueba.nombre,' ',aprueba.apellido) AS quien_aprueba,
 						fecha_aprobacion
 					FROM documentos
-					INNER JOIN users AS elabora
+					LEFT JOIN users AS elabora
 					ON documentos.quien_elabora = elabora.id
-					INNER JOIN users AS revisa
+					LEFT JOIN users AS revisa
 					ON documentos.quien_revisa = revisa.id
-					INNER JOIN users AS aprueba
+					LEFT JOIN users AS aprueba
 					ON documentos.quien_aprueba = aprueba.id
 					WHERE documentos.id = $id
 		    ";
@@ -201,7 +1124,6 @@
 					if($quien_aprueba == null){
 						$quien_aprueba = '';
 					}	              
-
 
 					if($fecha_aprueba == null){
 						$fecha_aprueba = '';
@@ -248,11 +1170,19 @@
 	    	$id = $_POST['id'];
 	    //error_log("id que me enviaron: $id");
 	    	$query = "
-		    		SELECT d.nombre,d.proceso_principal,td.tipo_de_documento,d.version,d.codigo
-					FROM documentos d
-					INNER JOIN tipo_de_documentos td
-					ON td.id = d.id_tipo_documento
-					WHERE d.id = $id
+		    		SELECT 
+					    d.nombre,
+					    d.proceso_principal,
+					    IFNULL(td.tipo_de_documento, 'SOLICITUD') AS tipo_de_documento,
+					    d.version,
+					    d.codigo,
+					    d.alcance
+					FROM 
+					    documentos d
+					LEFT JOIN 
+					    tipo_de_documentos td ON td.id = d.id_tipo_documento
+					WHERE 
+					    d.id = $id
 		    ";
 
 		    // Ejecuta la consulta y verifica si se ejecutó correctamente
@@ -268,6 +1198,7 @@
 		            $tipo_de_documento = $row['tipo_de_documento'];
 		            $version           = $row['version'];
 		            $codigo_documento  = $row['codigo'];
+		            $alcance 		   = $row['alcance'];
 		            
 		            // Agrega los resultados al arreglo $rows
 		            $data_rows[] = array(
@@ -275,7 +1206,8 @@
 		                'proceso_principal' => $proceso_principal,
 		                'tipo_de_documento' => $tipo_de_documento,
 		                'version' 			=> $version,
-		                'codigo' 			=> $codigo_documento
+		                'codigo' 			=> $codigo_documento,
+		                'alcance'			=> $alcance
 		            );
 		        }
 
@@ -304,15 +1236,33 @@
 	    $jsondata = array();
 	    $error = '';
 	    $message = '';
+	    $u = $_SESSION['id_u'];
+	    $rol = $_SESSION['rol_id'];
 
-	    $query = "
-	    		SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud
+	    if($rol != 14){
+	    	$query = "
+	    		SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud,sd.id AS id_solicitud
 				FROM documentos d
 				INNER JOIN status_documentos sd
 				ON sd.id = d.status
 				WHERE status_revision = 0
-	    ";
-
+				AND quien_revisa = $u
+				AND status NOT IN (5,10) 
+	    	";
+	    	
+	    }else{
+	    	$query = "
+	    		SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud,sd.id AS id_solicitud
+				FROM documentos d
+				INNER JOIN status_documentos sd
+				ON sd.id = d.status
+				WHERE fecha_revision IS NOT NULL
+				AND quien_aprueba = $u
+				AND status NOT IN (5,10)  
+	    	";
+	    }
+	    
+//error_log($query);
 	    // Ejecuta la consulta y verifica si se ejecutó correctamente
 	    $execute_query = $conn->query($query);
 
@@ -324,13 +1274,15 @@
 	            $nombre_documento  = $row['nombre'];
 	            $codigo_documento  = $row['codigo'];
 	            $tipo_de_solicitud = $row['tipo_de_solicitud'];
+	            $id_solicitud 	   = $row['id_solicitud'];
 	            
 	            // Agrega los resultados al arreglo $rows
 	            $data_rows[] = array(
 	            	'id'				=> $id_documento,
 	                'nombre' 			=> $nombre_documento,
 	                'codigo' 			=> $codigo_documento,
-	                'tipo_de_solicitud' => $tipo_de_solicitud
+	                'tipo_de_solicitud' => $tipo_de_solicitud,
+	                'id_solicitud' 		=> $id_solicitud
 	            );
 	        }
 
@@ -349,6 +1301,7 @@
 	}
 
 	function cd_cd_Function(){
+		//FUNCION PARA CREAR DOCUMENTO DESDE SOLICITUD
 		global $conn;
 		$jsondata = array();
 		$error 	  = '';
@@ -360,12 +1313,59 @@
 	        // Obtén los datos del formulario
 	        $nombre = $_POST["nombre"];
 	        $proceso_principal = $_POST["proceso_principal"];
-	        $otros_procesos = $_POST["otros_procesos"];
+	        
+	        if(isset($_POST["otros_procesos"])){
+	        	$otros_procesos = $_POST["otros_procesos"];
+	        }else{
+	        	$otros_procesos = "";
+	        }
+
 	        $subproceso = $_POST["subproceso"];
-	        $id_tipo_documento = $_POST["tipo_documento"];
-	        $version = $_POST["version"];
+	        if (isset($_POST["tipo_documento"])) {
+	        	$id_tipo_documento = $_POST["tipo_documento"];
+	        }else{
+	        	$id_tipo_documento = 0;
+	        }
+	        
+			
+			if(isset($_POST["version"])){
+	        	$version = $_POST["version"];
+	        }else{
+	        	$version = '001';
+	        }	   
+
+	        if(isset($_POST["solicitud"])){
+	        	$solicitud = $_POST["solicitud"];
+	        }else{
+	        	$solicitud = 2;
+	        }     
+
+	        if(isset($_POST["alcance"])){
+	        	$alcance = $_POST["alcance"];
+	        }else{
+	        	$alcance = '';
+	        }
+	        
+	        // INICIA BUSQUEDA PARA CREACION DE CODIGO SEGUN LAS SIGLAS RECIBIDAS
 	        $codigo = $_POST["codigo"];
-	        $alcance = $_POST["alcance"];
+	//error_log("CODIGO: $codigo");
+	        $query_codigo = "
+				SELECT IFNULL(
+				(SELECT 
+					RIGHT(CONCAT('$codigo', LPAD(SUBSTRING(codigo, LENGTH(codigo) - 2) + 1, 3, '0')), 3) 
+					FROM documentos 
+					WHERE codigo LIKE '$codigo%' 
+					ORDER BY SUBSTRING(codigo, LENGTH(codigo) - 2) DESC 
+					LIMIT 1),
+					'001'
+				) AS codigo;
+	        ";
+//error_log($query_codigo);
+	        $execute_query_codigo = $conn->query($query_codigo);
+	        $result = $execute_query_codigo->fetch_array();
+	        $correlativo_txt = $result['codigo'];
+	        $codigo .= $correlativo_txt;
+	//error_log("CODIGO: $codigo"); 
 	        $quien_elabora = $_POST["quien_elabora"];
 	        $quien_revisa = $_POST["quien_revisa"];
 	        $quien_aprueba = $_POST["quien_aprueba"];
@@ -394,7 +1394,14 @@
 		        if (move_uploaded_file($archivo_tmp_name, $ruta_destino)) {
 
 		            // Prepara la consulta SQL para insertar en la tabla documentos
-		            $sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, id_tipo_documento, version, codigo, alcance, quien_elabora, quien_revisa, quien_aprueba, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso', '$id_tipo_documento', '$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, $quien_aprueba, '$ruta_destino', $quien_visualiza, $quien_imprime, 2,0,NOW())";
+//error_log("Tipo de documento: $id_tipo_documento");
+		            if ($id_tipo_documento != 0){
+		            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, id_tipo_documento, version, codigo, alcance, quien_elabora, quien_revisa, quien_aprueba, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso', $id_tipo_documento, '$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, $quien_aprueba, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
+		            }else{
+		            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, version, codigo, alcance, quien_elabora, quien_revisa, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso','$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
+		            }
+		            
+//error_log($sql);
 
 		            $execute_query = $conn->query($sql);
 
@@ -414,6 +1421,7 @@
 			}else{
 				$error = "El archivo no es PDF ni Word";
 			}
+			
 	    } else {
 	        // No se ha subido ningún archivo o hubo un error en la carga
 	        $error = "No se ha subido ningún archivo o hubo un error en la carga.";
@@ -424,6 +1432,7 @@
 		header("Content-type: application/json");
 
 		$jsondata['message'] = $message;
+		$jsondata['codigo']  = $codigo;
 		$jsondata['error']   = $error;
 		echo json_encode($jsondata);
 		
@@ -442,18 +1451,23 @@
 		$execute_query = $conn->query($query);
 
 		if($execute_query){
-			$html .= "<option value='0'>Selecciona un usuario...</option>";
+			//$html .= "<option value='0'>Selecciona un usuario...</option>";
 			while($row = $execute_query->fetch_array()){
 				$id 	= $row['id'];
 				$nombre = $row['nombre'] . ' ' . $row['apellido'];
-				$html .= "<option value='$id'>$nombre</option>";	
+				//$html .= "<option value='$id'>$nombre</option>";	
+				$data_rows[] = array(
+					'id' => $id,
+					'nombre' => $nombre
+				);
 			}
 			
 		}else{
 			$error = 'Error cargando los usuarios de base de datos: '.$conn->error;
 		}
 
-		$jsondata['html'] 		= $html;
+		//$jsondata['html'] 		= $html;
+		$jsondata['html'] 		= $data_rows;
 		$jsondata['message'] 	= $message;
 		$jsondata['error']   	= $error;
 		echo json_encode($jsondata);
@@ -464,26 +1478,31 @@
 		$jsondata = array();
 		$error 	  = '';
 		$message  = '';
-		$html 	  = '';
 
-		$query = "SELECT id,tipo_de_documento FROM tipo_de_documentos 
+		$query = "SELECT id,tipo_de_documento,siglas FROM tipo_de_documentos 
 				  WHERE status = 1;
 				 ";
 		$execute_query = $conn->query($query);
 
 		if($execute_query){
-			$html .= "<option value='0'>Selecciona un tipo de documento...</option>";
 			while($row = $execute_query->fetch_array()){
 				$id 	= $row['id'];
 				$nombre = $row['tipo_de_documento'];
-				$html .= "<option value='$id'>$nombre</option>";	
+				$siglas = $row['siglas'];
+				$data_rows[]=array(
+					'id' => $id,
+					'nombre' => $nombre,
+					'siglas' => $siglas
+				);
 			}
 			
 		}else{
 			$error = 'Error cargando los tipos de documentos de base de datos: '.$conn->error;
 		}
 
-		$jsondata['html'] 		= $html;
+		//error_log($html);
+
+		$jsondata['html'] 		= $data_rows;
 		$jsondata['message'] 	= $message;
 		$jsondata['error']   	= $error;
 		echo json_encode($jsondata);
@@ -511,7 +1530,10 @@
 //error_log("DIR: $dir");
 		foreach ($folders as $folder) {
 //error_log("folder: $folder Principal: $principal");
-			if ($folder !== '.' && $folder !== '..' && $folder <> $principal) {
+			$elementPath = $dir.'/'.$folder;
+//error_log($elementPath);
+
+			if (is_dir($elementPath) && $folder !== '.' && $folder !== '..' && $folder <> $principal) {
 				$folder_count++;
 				$subfolderPath = $dir_var . $folder . '/';
 				$html .= '<option value="'.$folder.'">'.$folder.'</option>';
@@ -590,10 +1612,10 @@
 	    	$email = $_POST['email'];
 	    	$pass  = $_POST['contra'];
 
-	    	$query = "SELECT email,password,nombre,apellido,rol_id 
+	    	$query = "SELECT email,password,nombre,apellido,rol_id,id 
 					FROM users
 					WHERE email = '$email'
-					AND MD5('$pass')
+					AND MD5('$pass') = password
 					AND status = 1";
 
 			// Ejecuta la consulta y verifica si se ejecutó correctamente
@@ -607,9 +1629,11 @@
 		            $nombre 	= $row['nombre'];
 		            $apellido 	= $row['apellido'];
 		            $rol_id 	= $row['rol_id'];
+		            $id 		= $row['id'];
 
 		            $_SESSION['nombre_u'] 	= $nombre . ' ' . $apellido;
 		            $_SESSION['rol_id'] 	= $rol_id; 
+		            $_SESSION['id_u']		= $id;
 		            
 		            // Agrega los resultados al arreglo $rows
 		            $data_rows[] = array(
@@ -671,7 +1695,14 @@
 	    $error = '';
 	    $message = '';
 
-	    $query = "SELECT id, nombre, apellido, email, status FROM users";
+	    //$query = "SELECT id, nombre, apellido, email, status FROM users";
+	    $query = "
+	    	SELECT id, nombre, apellido, email, r.nombre_rol, status 
+			FROM users u
+			INNER JOIN roles r
+			ON u.rol_id = r.id_rol
+
+	    ";
 
 	    // Ejecuta la consulta y verifica si se ejecutó correctamente
 	    $execute_query = $conn->query($query);
@@ -684,6 +1715,7 @@
 	            $nombre 	= $row['nombre'];
 	            $apellido 	= $row['apellido'];
 	            $email 		= $row['email'];
+	            $nombre_rol = $row['nombre_rol'];
 	            $status 	= $row['status'];
 	            
 	            // Agrega los resultados al arreglo $rows
@@ -692,6 +1724,7 @@
 	                'nombre' 	=> $nombre,
 	                'apellido'	=> $apellido,
 	                'email'		=> $email,
+	                'nombre_rol'=> $nombre_rol,
 	                'status' => $status
 	            );
 	        }
@@ -841,13 +1874,14 @@
 	    echo json_encode($jsondata);
 	}
 
+	// SE LEEN LOS DISTINTOS TIPOS DE DOCUMENTOS PARA EL MANTENIMIENTO DE TIPO DE DOCUMENTOS
 	function mtdd_ltdl_Function(){
 	    global $conn;
 	    $jsondata = array();
 	    $error = '';
 	    $message = '';
 
-	    $query = "SELECT id, tipo_de_documento, status FROM tipo_de_documentos";
+	    $query = "SELECT id, tipo_de_documento, status, siglas FROM tipo_de_documentos";
 
 	    // Ejecuta la consulta y verifica si se ejecutó correctamente
 	    $execute_query = $conn->query($query);
@@ -859,16 +1893,19 @@
 	            $id = $row['id'];
 	            $nombre = $row['tipo_de_documento'];
 	            $status = $row['status'];
+	            $siglas = $row['siglas'];
 	            
 	            // Agrega los resultados al arreglo $rows
 	            $data_rows[] = array(
 	                'id' => $id,
 	                'nombre' => $nombre,
-	                'status' => $status
+	                'status' => $status,
+	                'siglas' => $siglas
 	            );
 	        }
 
 	        // Agrega los resultados al arreglo jsondata
+	//error_log(print_r($data_rows,true));
 	        $jsondata['data'] = $data_rows;
 	        $message = 'Consulta ejecutada con éxito.';
 	    } else {
@@ -882,6 +1919,7 @@
 	    echo json_encode($jsondata);
 	}
 
+	// SE CREA EL TIPO DE DOCUMENTO EN EL MANTENIMIENTO DE TIPO DE DOCUMENTOS
 	function mtdd_ctdd_Function(){
 		global $conn;
 		$jsondata = array();
@@ -889,8 +1927,9 @@
 		$message  = '';
 
 		if (isset($_POST['nombre'])){
-			$nombre = $_POST['nombre'];
-			$query = "INSERT INTO tipo_de_documentos (tipo_de_documento,status) VALUES ('$nombre',1)";
+			$nombre = utf8_encode($_POST['nombre']);
+			$siglas = $_POST['siglas'];
+			$query = "INSERT INTO tipo_de_documentos (tipo_de_documento,siglas,status) VALUES ('$nombre','$siglas',1)";
 			$execute_query = $conn->query($query);
 
 			if ($execute_query) {

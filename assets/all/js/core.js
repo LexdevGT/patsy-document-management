@@ -100,9 +100,10 @@ function buildSidebar(data) {
 }
 
 function buildMenuItem(privilege) {
+    
     return "<a href=\"" + privilege.path + "\" class=\"nav-link\">" +
         "<i class=\"nav-icon " + privilege.icon + "\"></i>" +
-        "<p>" + privilege.nombre_opcion_privilegio + "</p>" +
+        "<p>" + decodeURI(escape(privilege.nombre_opcion_privilegio)) + "</p>" +
         "</a>";
 }
 

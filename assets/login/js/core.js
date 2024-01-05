@@ -33,7 +33,7 @@ function new_function(){
 }
 
 function ingresar(){
-
+//console.log('Iniciando llamada ajax');
     var email   = $('#email');
     var contra  = $('#contra');
     

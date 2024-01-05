@@ -235,13 +235,13 @@
             <label>Quien puede visualizar</label>
           </div>
           <div class="col">
+            <!--
             <select class="form-control" id="select_quien_visualiza">
-              <option>option 1</option>
-              <option>option 2</option>
-              <option>option 3</option>
-              <option>option 4</option>
-              <option>option 5</option>
+              
             </select>
+          -->
+            <select class="select2 form-control" multiple="multiple" id="select_quien_visualiza" data-placeholder="Selecciona los usuarios...">
+              </select>
           </div>
         </div>
         <!-- /.row -->
@@ -251,6 +251,7 @@
             <label>Quien puede imprimir</label>
           </div>
           <div class="col">
+            <!--
             <select class="form-control" id="select_quien_imprime">
               <option>option 1</option>
               <option>option 2</option>
@@ -258,6 +259,9 @@
               <option>option 4</option>
               <option>option 5</option>
             </select>
+          -->
+          <select class="select2 form-control" multiple="multiple" id="select_quien_imprime" data-placeholder="Selecciona los usuarios...">
+              </select>
           </div>
         </div>
         <!-- /.row -->

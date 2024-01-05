@@ -104,34 +104,30 @@
           <div class="col">
             <select class="form-control" id="status">
               <option>Selecciona un estatus...</option>
-              <option>Creación</option>
-              <option>Modificación</option>
-              <option>Eliminar</option>
+         
             </select>
           </div>
           <div class="col">
             <select class="form-control" id="proceso">
               <option>Selecciona un proceso...</option>
-              <option>Proceso #1</option>
-              <option>Proceso #2</option>
-              <option>Proceso #3</option>
+           
             </select>
           </div>
           <div class="col">
             <select class="form-control" id="subproceso">
               <option>Selecciona un subproceso...</option>
-              <option>subproceso #1</option>
-              <option>subproceso #2</option>
-              <option>subproceso #3</option>
+             
             </select>
           </div>
         </div>
         <!-- /Row -->
         <!-- Row -->
         <div class="row mt-5">
+          <!--
           <div class="col">
             <label>Tipo de documento:</label>
           </div>
+          -->
           <div class="col">
             <label>Nombre del documento:</label>
           </div>
@@ -145,44 +141,38 @@
         <!-- /Row -->
         <!-- Row -->
         <div class="row">
+          <!--
           <div class="col">
-            <select class="form-control">
+            <select class="form-control" id="select_tipo_documento">
               <option>Selecciona un tipo de documento...</option>
-              <option>Manual</option>
-              <option>Política</option>
-              <option>Caracterización de procesos</option>
-              <option>Procedimiento</option>
-              <option>Especificación Técnica/Ficha Técnica</option>
-              <option>Instructivo</option>
-              <option>Metodo de trabajo</option>
+        
+            </select>
+          </div>
+          -->
+          <div class="col">
+            <input class="form-control" type="text" placeholder="" id="nombre_docto">
+          </div>
+          <div class="col">
+            <select class="form-control usuarios" id="quien_solicita">
+              <option>Selecciona un usuario...</option>
+          
             </select>
           </div>
           <div class="col">
-            <input class="form-control" type="text" placeholder="">
-          </div>
-          <div class="col">
-            <select class="form-control">
+            <select class="form-control usuarios" id="quien_revisa">
               <option>Selecciona un usuario...</option>
-              <option>Usuario #1</option>
-              <option>Usuario #2</option>
-              <option>Usuario #3</option>
-            </select>
-          </div>
-          <div class="col">
-            <select class="form-control">
-              <option>Selecciona un usuario...</option>
-              <option>Usuario #1</option>
-              <option>Usuario #2</option>
-              <option>Usuario #3</option>
+        
             </select>
           </div>
         </div>
         <!-- /Row -->
          <!-- Row -->
         <div class="row mt-5">
+          <!--
           <div class="col">
             <label>Quien aprueba:</label>
           </div>
+          -->
           <div class="col">
             <label>Quien puede visualizar:</label>
           </div>
@@ -193,28 +183,24 @@
         <!-- /Row -->
         <!-- Row -->
         <div class="row">
+          <!--
           <div class="col">
-            <select class="form-control">
+            <select class="form-control usuarios" id="quien_aprueba">
               <option>Selecciona un usuario...</option>
-              <option>Usuario #1</option>
-              <option>Usuario #2</option>
-              <option>Usuario #3</option>
+             
+            </select>
+          </div>
+          -->
+          <div class="col">
+            <select class="form-control usuarios" id="quien_visualiza">
+              <option>Selecciona un usuario...</option>
+            
             </select>
           </div>
           <div class="col">
-            <select class="form-control">
+            <select class="form-control usuarios" id="quien_imprime">
               <option>Selecciona un usuario...</option>
-              <option>Usuario #1</option>
-              <option>Usuario #2</option>
-              <option>Usuario #3</option>
-            </select>
-          </div>
-          <div class="col">
-            <select class="form-control">
-              <option>Selecciona un usuario...</option>
-              <option>Usuario #1</option>
-              <option>Usuario #2</option>
-              <option>Usuario #3</option>
+           
             </select>
           </div>
         </div>
@@ -233,7 +219,7 @@
         <div class="row">
           <div class="col">
             <div class="form-group">
-              <textarea class="form-control" rows="3" placeholder="..."></textarea>
+              <textarea class="form-control" rows="3" placeholder="..." id="objetivo"></textarea>
             </div>
           </div>
           <div class="col">

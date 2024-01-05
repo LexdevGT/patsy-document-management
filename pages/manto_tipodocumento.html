@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Patsy DM | Dashboard</title>
 
   <!-- Google Font: Source Sans Pro -->
@@ -88,15 +89,21 @@
       <div class="container-fluid">
         <!-- Row -->
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-5">
             <label>Tipo de documento:</label>
+          </div>
+          <div class="col-sm-5">
+            <label>Abreviatura:</label>
           </div>
         </div>
         <!-- /Row -->
         <!-- Row -->
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-sm-5">
             <input class="form-control" type="text" placeholder="" id="tipo_documento">
+          </div>
+          <div class="col-sm-5">
+            <input class="form-control" type="text" placeholder="" id="siglas">
           </div>
           <div class=" col-auto">
             <button class="btn btn-patsy" id="enviar">Crear</button>
@@ -117,6 +124,7 @@
                     <tr>
                       <th style="width: 10px">#</th>
                       <th>Nombre de tipo de documento</th>
+                      <th>Abreviatura</th>
                       <th>Activo/Inactivo</th>
                     </tr>
                   </thead>
@@ -219,8 +227,8 @@
 <!-- AdminLTE App -->
 <script src="../assets/all/js/adminlte.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="../assets/all/js/core.js"></script>
-<script src="../assets/manto_tipodocumento/js/core.js"></script>
+<script src="../assets/all/js/core.js"  charset="UTF-8"></script>
+<script src="../assets/manto_tipodocumento/js/core.js" charset="UTF-8"></script>
 
 
 
