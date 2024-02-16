@@ -28,6 +28,12 @@ $(function(){
         load_subprocesos();
     });
 
+    $('#subirArchivo').change(function(){
+        var fileName = this.files[0].name;
+        $('.custom-file-label').html(fileName);
+        //console.log(fileName);
+    });
+
 });
 
 

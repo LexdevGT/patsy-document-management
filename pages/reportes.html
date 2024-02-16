@@ -91,95 +91,41 @@
         <!-- First Row -->
         <div class="row">
           <div class="col">
-            <div class="card">
-              
-                <!-- we are adding the accordion ID so Bootstrap's collapse plugin detects it -->
-                <div id="accordion">
-                  <div class="card card-primary">
-                    <div class="card-header">
-                      <h4 class="card-title w-100">
-                        <a class="d-block w-100" data-toggle="collapse" href="#collapseOne">
-                          Información de documento
-                        </a>
-                      </h4>
-                    </div>
-                    <div id="collapseOne" class="collapse" data-parent="#accordion">
-                      <div class="card-body" id="info-basica">
-                        <b>Nombre del documento:</b> Cargando... <br>
-                        <b>Proceso principal:</b> ... <br>
-                        <b>Tipo de documento:</b> ... <br>
-                        <b>Versión:</b> ... <br>
-                        <b>Código:</b> ...
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
+            <button type="button" class="btn btn-success mt-3 mb-3" id="exportExcelBtn">
+              <i class="far fa-file-excel"></i> Exportar a Excel
+            </button>
           </div>
         </div>
-        <!-- Row -->
-        <div class="row">
-          <div class="col text-center mt-3">
-            <h3 id="nombre-proyecto">...|||...</h3>
-          </div>
-        </div>
-        <!-- /Row -->
-        <!-- Row -->
-        <div class="row">
-          <div class="col mt-3">
-            <textarea id="summernote">
-              ...
-            </textarea>
-          </div>
-        </div>
-        <!-- /Row -->
-        <!-- Row -->
+        <!-- Second Row -->
         <div class="row">
           <div class="col">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover" id="full_table">
               <thead>
                 <tr>
-                  <th>Elaboró</th>
-                  <th>Revisó</th>
-                  <th>Aprobó</th>
+                  <th>No.</th>
+                  <th>Código</th>
+                  <th>Descripción</th>
+                  <th>Versión</th>
+                  <th>Tipo de Documento</th>
+                  <th>Proceso</th>
+                  <th>Estatus</th>
                 </tr>
               </thead>
-              <tbody id="footer-revisar">
+              <tbody id="document_list">
                 <tr >
-                  <td>Nombre</td>
-                  <td>Nombre</td>
-                  <td>Nombre</td>
-                </tr>
-                <!--
-                <tr >
-                  <td>Puesto</td>
-                  <td>Puesto</td>
-                  <td>Puesto</td>
-                </tr>
-                -->
-                <tr >
-                  <td>Fecha</td>
-                  <td>Fecha</td>
-                  <td>Fecha</td>
+                  <td>Cargando...</td>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
         <!-- /Row -->
-        <!-- Row -->
-        <div class="row mt-3">
-          <div class=" col-auto">
-            <button class="btn btn-patsy" id="revisado">Aceptar</button>
-          </div>
-          <div class=" col ">
-            <button class="btn btn-patsy-exit" id="rechazado">Rechazar</button>
-          </div>
-        </div>
-        <!-- /.row -->
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
@@ -205,40 +151,14 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="../assets/all/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- daterangepicker -->
-<script src="../assets/all/moment/moment.min.js"></script>
-<script src="../assets/all/daterangepicker/daterangepicker.js"></script>
-<!-- Summernote -->
-<script src="../assets/all/summernote/summernote-bs4.min.js"></script>
+
 <!-- AdminLTE App -->
 <script src="../assets/all/js/adminlte.js"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<!-- Systems JS-->
 <script src="../assets/all/js/core.js"></script>
-<script src="../assets/revisar/js/core.js"></script>
+<script src="../assets/reportes/js/xlsx.full.min.js"></script>
+<script src="../assets/reportes/js/core.js"></script>
 
-<div class="modal fade" id="modal-rechazo">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content bg-patsy">
-      <div class="modal-header">
-        <h4 class="modal-title">Patsy</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <textarea id="comentario_rechazo">
-        Deja tu razón del rechazo.
-      </textarea>
-      
-      <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default" id="btn-save-rechazo" data-dismiss="modal">Guardar</button>
-        <button type="button" class="btn btn-default" id="btn-close-login" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-    <!-- /.modal-content -->
-  </div>
-  <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
 
 </body>
 </html>

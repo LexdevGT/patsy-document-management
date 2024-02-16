@@ -6,6 +6,17 @@ $(function(){
     $('#enviar').click(function(){
         create_region();
     });
+
+    $('#btn-update').click(function(){
+        var data = $('#nombre_region').attr('data');
+        var n = $('#nombre_region').val();
+        $('#btn-update').hide();
+        $('#enviar').show();
+        $('#nombre_region').val('');
+        
+        //alert(n);
+        update_region(data,n);
+    });
   
 });
 
@@ -14,7 +25,7 @@ function new_function(){
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
         type: "POST",
-        url: "../assets/php/services.php",
+        url: "../assets/all/php/services.php",
         data: ({
             option: 'security'                   
         }),
@@ -27,6 +38,55 @@ function new_function(){
                 window.location.replace('../dashboard.html');
             }
         }    
+    });
+}
+
+function update_region(id,n){
+    
+    $.ajax({
+        contentType: "application/x-www-form-urlencoded",
+        type: "POST",
+        url: "../assets/all/php/services.php",
+        data: ({
+            option: 'update_region',
+            id,
+            n                   
+        }),
+        dataType: "json",        
+        success: function(r) {                                                   
+            if(r.error == ''){
+                location.reload();
+            }else{
+                alert(r.error);
+                window.location.replace('../dashboard.html');
+            }
+        }    
+    });
+}
+
+function get_nombre_region(Id) {
+    $.ajax({
+        contentType: "application/x-www-form-urlencoded",
+        type: "POST",
+        url: "../assets/all/php/services.php",
+        data: {
+            option: 'get_nombre_region',
+            id: Id
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response.error === '') {
+                $.each(response.data, function (index, region) {
+                    $('#nombre_region').val(decodeURI(escape(region.nombre))); 
+                    $('#nombre_region').attr("data",region.id);
+                    $('#enviar').hide();
+                    $('#btn-update').show();
+                });
+                
+            } else {
+                alert('Error al actualizar el estado: ' + response.error);
+            }
+        }
     });
 }
 
@@ -75,7 +135,7 @@ function load_region_list() {
                     $.each(r.data, function (index, region) {
                         var row = $('<tr>');
                         row.append('<td>' + (region.id) + '.</td>');
-                        row.append('<td>' + region.nombre + '</td>');
+                        row.append('<td><a href="#" onclick="get_nombre_region(' + region.id + ')">' + decodeURI(escape(region.nombre)) + '</a></td>');
 
                         // Crea el switch con el estado adecuado
                         var switchHtml = '<div class="form-group">' +

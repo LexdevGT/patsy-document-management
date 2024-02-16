@@ -100,8 +100,8 @@ function crear_documento() {
 
 
         //var codigo = siglas_proceso_principal+'-'+tipo_documento+'-'+formatoFechaHora;
-        var codigo = siglas_proceso_principal+'-'+siglas_tipo_documento+'-';
-        
+        var codigo = siglas_tipo_documento+'-'+siglas_proceso_principal+'-';
+        //console.log('codigo: '+codigo);
 
         // Creando el objeto FormData y agrego los datos del formulario
         var formData = new FormData();

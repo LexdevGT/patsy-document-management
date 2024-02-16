@@ -102,7 +102,7 @@ function load_privileges() {
                             privilegeHtml += '>';
                         }
 
-                        privilegeHtml += '<label for="'+p.id_privilegio+'" class="custom-control-label">' + p.nombre_privilegio + '</label>' +
+                        privilegeHtml += '<label for="'+p.id_privilegio+'" class="custom-control-label">' + decodeURI(escape(p.nombre_privilegio)) + '</label>' +
                             '</div>';
 
                         // Distribuye los privilegios en función del índice

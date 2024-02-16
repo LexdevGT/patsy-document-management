@@ -75,7 +75,7 @@ function load_list() {
                     $.each(r.data, function (index, sucursal) {
                         var row = $('<tr>');
                         row.append('<td>' + (sucursal.id) + '.</td>');
-                        row.append('<td>' + sucursal.nombre + '</td>');
+                        row.append('<td>' + decodeURI(escape(sucursal.nombre)) + '</td>');
 
                         // Crea el switch con el estado adecuado
                         var switchHtml = '<div class="form-group">' +

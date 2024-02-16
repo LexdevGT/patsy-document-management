@@ -160,6 +160,30 @@
 		    case 'modificar_usuario':
 		    	mu_mu_Function();
 		    	break;
+		    case 'procesar_documento':
+		    	r_pd_Function();
+		    	break;
+	    	case 'cargar_lista_reporte':
+		    	r_clr_Function();
+		    	break;
+		    case 'obtener_conteo_documentos_aprobados':
+		    	d_ocda_Function();
+		    	break;
+		    case 'documentos_creados_por_dia':
+		    	d_dcpd_Function();
+		    	break;
+		    case 'documentos_revisados_por_dia':
+		    	d_drpd_Function();
+		    	break;
+		    case 'getLineChartData':
+			    d_glcd_Function();
+			    break;
+			case 'get_nombre_region':
+				mr_gnr_Function();
+				break;
+			case 'update_region':
+				mr_ur_Function();
+				break;
 		}
 	}
 
@@ -178,6 +202,358 @@
 
 		}else{
 			$error = 'Error cargando los roles de base de datos: '.$conn->error;
+		}
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function mr_ur_Function(){
+		global $conn;
+		$jsondata 		 = array();
+		$error 	  		 = '';
+		$message  		 = '';
+		$id 			 = $_POST['id'];
+		$name 			 = $_POST['n'];
+
+		$query = "
+				UPDATE region
+				SET nombre_region = '$name'
+				WHERE id_region = $id
+				 ";
+
+		//error_log($query);
+		
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$message = 'Documento procesado correctamente!';
+		}else{
+			$error = 'Error en la base de datos urgente revisar: '.$conn->error;
+		}
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function mr_gnr_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+	    $id = $_POST['id'];
+
+	    $query = "SELECT id_region AS id, nombre_region AS nombre, status_region AS status 
+	    	FROM region
+	    	WHERE id_region = $id
+	    	";
+//error_log("QUERY: $query");
+	    // Ejecuta la consulta y verifica si se ejecutó correctamente
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        // La consulta se ejecutó con éxito, ahora puedes obtener los resultados
+	        $rows = array();
+	        while ($row = $execute_query->fetch_array()) {
+	            $id = $row['id'];
+	            $nombre = $row['nombre'];
+	            $status = $row['status'];
+	            
+	            // Agrega los resultados al arreglo $rows
+	            $data_rows[] = array(
+	                'id' => $id,
+	                'nombre' => $nombre,
+	                'status' => $status
+	            );
+	        }
+
+	        // Agrega los resultados al arreglo jsondata
+	        $jsondata['data'] = $data_rows;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        // La consulta falló, establece un mensaje de error
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    // Agrega el mensaje y el error al arreglo jsondata
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function d_glcd_Function() {
+		// Grafica de solicitud de documentos nuevos por día
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    $query = "SELECT DATE_FORMAT(fecha, '%W, %M %e, %Y') AS fecha_formateada, cantidad
+	              FROM (
+						SELECT fecha, count(*) cantidad
+						FROM documentos
+						WHERE status NOT IN( 11)
+						GROUP BY fecha
+						ORDER BY fecha DESC
+						
+						LIMIT 6
+					) a";
+
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        $fechas = array();
+	        $cantidades = array();
+
+	        while ($row = $execute_query->fetch_assoc()) {
+	            $fechas[] = $row['fecha_formateada'];
+	            $cantidades[] = $row['cantidad'];
+	        }
+
+	        $data = array(
+	            'labels' => $fechas,
+	            'datasets' => array(
+	                array(
+	                    'label' => 'Documentos Creados por Día',
+	                    'borderColor' => 'rgba(60,141,188,0.8)',
+	                    'pointRadius' => false,
+	                    'pointColor' => '#3b8bba',
+	                    'pointStrokeColor' => 'rgba(60,141,188,1)',
+	                    'pointHighlightFill' => '#fff',
+	                    'pointHighlightStroke' => 'rgba(60,141,188,1)',
+	                    'data' => $cantidades
+	                )
+	            )
+	        );
+
+	        $jsondata['data'] = $data;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+
+	function d_drpd_Function() {
+		// DOCUMENTOS REVISADOS POR DIA
+	 
+	    global $conn;
+
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    $query = "SELECT DATE_FORMAT(date_time, '%W, %M %e, %Y') AS fecha_formateada, COUNT(*) AS cantidad
+	              FROM history
+	              WHERE status = 9
+	              GROUP BY fecha_formateada
+	              ORDER BY fecha_formateada DESC
+	              LIMIT 6
+	              ";
+
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        $fechas = array();
+	        $cantidades = array();
+
+	        while ($row = $execute_query->fetch_assoc()) {
+	            $fechas[] = $row['fecha_formateada'];
+	            $cantidades[] = $row['cantidad'];
+	        }
+
+	        $data = array(
+	            'labels' => $fechas,
+	            'datasets' => array(
+	                array(
+	                    'label' => 'Documentos Revisados',
+	                    'backgroundColor' => 'rgba(60,141,188,0.9)',
+	                    'borderColor' => 'rgba(60,141,188,0.8)',
+	                    'pointRadius' => false,
+	                    'pointColor' => '#3b8bba',
+	                    'pointStrokeColor' => 'rgba(60,141,188,1)',
+	                    'pointHighlightFill' => '#fff',
+	                    'pointHighlightStroke' => 'rgba(60,141,188,1)',
+	                    'data' => $cantidades
+	                )
+	            )
+	        );
+
+	        $jsondata['data'] = $data;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function d_dcpd_Function() {
+		//Documentos creados por dia
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    $query = "
+	    	SELECT DATE_FORMAT(fecha, '%W, %M %e, %Y') AS fecha_formateada, cantidad
+              FROM (
+					SELECT fecha, count(*) cantidad
+					FROM documentos
+					WHERE status = 11
+					GROUP BY fecha
+					ORDER BY fecha DESC
+					LIMIT 6
+					) a";
+
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        $fechas = array();
+	        $cantidades = array();
+
+	        while ($row = $execute_query->fetch_assoc()) {
+	            $fechas[] = $row['fecha_formateada'];
+	            $cantidades[] = $row['cantidad'];
+	        }
+
+	        $data = array(
+	            'fechas' => $fechas,
+	            'cantidades' => $cantidades
+	        );
+
+	        $jsondata['data'] = $data;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+
+	function d_ocda_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+
+		$query = "SELECT count(*) AS c
+					FROM documentos
+					WHERE status = 10
+				 ";
+		$execute_query = $conn->query($query);
+		$fila = $execute_query->fetch_array();
+		if($execute_query){
+			$message = $fila['c'];
+		}else{
+			$error = 'Error cargando los documentos aprobados de base de datos: '.$conn->error;
+		}
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function r_clr_Function(){
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+	    $u = $_SESSION['id_u'];
+	    $rol = $_SESSION['rol_id'];
+
+	    	$query = "
+	    		SELECT 
+					(@row := @row + 1) as rownr,
+					codigo, 
+					alcance, 
+					version,  
+					td.tipo_de_documento AS tipo_documento,
+					proceso_principal, 
+					sd.nombre AS 'status'
+				FROM documentos
+				CROSS join (select @row := 0) r
+				INNER JOIN tipo_de_documentos td
+				ON documentos.id_tipo_documento = td.id
+				INNER JOIN status_documentos sd
+				ON documentos.`status` = sd.id;
+	    	";
+	   
+	    
+//error_log($query);
+	    // Ejecuta la consulta y verifica si se ejecutó correctamente
+	    $execute_query = $conn->query($query);
+
+	    if ($execute_query) {
+	        
+	        $rows = array();
+	        while ($row = $execute_query->fetch_array()) {
+	        	$number      		= $row['rownr'];
+	            $codigo  			= $row['codigo'];
+	            $alcance  			= $row['alcance'];
+	            $version 			= $row['version'];
+	            $tipo_documento 	= $row['tipo_documento'];
+	            $proceso_principal 	= $row['proceso_principal'];
+	            $status 			= $row['status'];
+	            
+	            // Agrega los resultados al arreglo $rows
+	            $data_rows[] = array(
+	            	'number'			=> $number,
+	                'codigo' 			=> $codigo,
+	                'alcance' 			=> $alcance,
+	                'version' 			=> $version,
+	                'tipo_documento' 	=> $tipo_documento,
+	                'proceso_principal'	=> $proceso_principal,
+	                'status' 			=> $status
+	            );
+	        }
+
+	        // Agrega los resultados al arreglo jsondata
+	        $jsondata['data'] = $data_rows;
+	        $message = 'Consulta ejecutada con éxito.';
+	    } else {
+	        // La consulta falló, establece un mensaje de error
+	        $error = 'Error al ejecutar la consulta: ' . $conn->error;
+	    }
+
+	    // Agrega el mensaje y el error al arreglo jsondata
+	    $jsondata['message'] = $message;
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function r_pd_Function(){
+		global $conn;
+		$jsondata 		 = array();
+		$error 	  		 = '';
+		$message  		 = '';
+		$id 			 = $_POST['id'];
+
+		$query = "
+				UPDATE documentos
+				SET status = 11
+				WHERE id = $id
+				 ";
+
+		//error_log($query);
+		
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			$message = 'Documento procesado correctamente!';
+		}else{
+			$error = 'Error en la base de datos urgente revisar: '.$conn->error;
 		}
 
 		$jsondata['message'] = $message;
@@ -619,40 +995,81 @@
 	    if (isset($_POST['busqueda'])) {
 	    	$busqueda = $_POST['busqueda'];
 	    	$query = "
-	    		SELECT 
-					id_documento AS codigo,
-					observacion,
-					sd.nombre,
-					date_time,
-					CONCAT(us.nombre,' ',us.apellido) AS solicitante,
-					CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
-				FROM history
-				INNER JOIN status_documentos sd
-				ON history.status = sd.id
-				INNER JOIN users us 
-				ON history.id_solicitante = us.id
-				INNER JOIN users ua
-				ON history.id_aprobar = ua.id
-				WHERE status_history = 1
-				AND id_documento LIKE '%$busqueda%'
+	    		SELECT * FROM
+				(
+					SELECT 
+						history.id_documento AS codigo,
+						observacion,
+						sd.nombre,
+						history.date_time,
+						CONCAT(us.nombre,' ',us.apellido) AS solicitante,
+						CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
+					FROM history
+					INNER JOIN status_documentos sd
+					ON history.status = sd.id
+					INNER JOIN users us 
+					ON history.id_solicitante = us.id
+					INNER JOIN users ua
+					ON history.id_aprobar = ua.id
+					WHERE status_history = 1
+					UNION
+					SELECT documentos.codigo,
+						cr.comentario AS observacion,
+						sd.nombre,
+						cr.date_time,
+						CONCAT(us.nombre,' ',us.apellido) AS solicitante,
+						CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
+					FROM comentarios_rechazo cr
+					INNER JOIN documentos
+					ON cr.id_documento = documentos.id
+					INNER JOIN status_documentos sd
+					ON documentos.`status` = sd.id
+					INNER JOIN users us
+					ON documentos.quien_elabora = us.id
+					INNER JOIN users ua
+					ON documentos.quien_revisa = ua.id
+				) base
+				WHERE codigo LIKE '%$busqueda%'
+				ORDER BY date_time
+				
 					    ";
 	    }else{
 	    	$query = "
-	    		SELECT 
-					id_documento AS codigo,
-					observacion,
-					sd.nombre,
-					date_time,
-					CONCAT(us.nombre,' ',us.apellido) AS solicitante,
-					CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
-				FROM history
-				INNER JOIN status_documentos sd
-				ON history.status = sd.id
-				INNER JOIN users us 
-				ON history.id_solicitante = us.id
-				INNER JOIN users ua
-				ON history.id_aprobar = ua.id
-				WHERE status_history = 1
+	    		SELECT * FROM
+				(
+					SELECT 
+						history.id_documento AS codigo,
+						observacion,
+						sd.nombre,
+						history.date_time,
+						CONCAT(us.nombre,' ',us.apellido) AS solicitante,
+						CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
+					FROM history
+					INNER JOIN status_documentos sd
+					ON history.status = sd.id
+					INNER JOIN users us 
+					ON history.id_solicitante = us.id
+					INNER JOIN users ua
+					ON history.id_aprobar = ua.id
+					WHERE status_history = 1
+					UNION
+					SELECT documentos.codigo,
+						cr.comentario AS observacion,
+						sd.nombre,
+						cr.date_time,
+						CONCAT(us.nombre,' ',us.apellido) AS solicitante,
+						CONCAT(ua.nombre,' ',ua.apellido) AS aprueba
+					FROM comentarios_rechazo cr
+					INNER JOIN documentos
+					ON cr.id_documento = documentos.id
+					INNER JOIN status_documentos sd
+					ON documentos.`status` = sd.id
+					INNER JOIN users us
+					ON documentos.quien_elabora = us.id
+					INNER JOIN users ua
+					ON documentos.quien_revisa = ua.id
+				) base
+				ORDER BY date_time
 					    ";
 	    }
 	    
@@ -1247,7 +1664,7 @@
 				ON sd.id = d.status
 				WHERE status_revision = 0
 				AND quien_revisa = $u
-				AND status NOT IN (5,10) 
+				AND status NOT IN (5,10,11) 
 	    	";
 	    	
 	    }else{
@@ -1258,7 +1675,7 @@
 				ON sd.id = d.status
 				WHERE fecha_revision IS NOT NULL
 				AND quien_aprueba = $u
-				AND status NOT IN (5,10)  
+				AND status NOT IN (5,10,11)  
 	    	";
 	    }
 	    
@@ -1306,7 +1723,8 @@
 		$jsondata = array();
 		$error 	  = '';
 		$message  = '';
-		
+		$codigo = $_POST["codigo"];
+	//error_log("CODIGO: $codigo");
 
 		// Verifica si se ha subido un archivo y no hay errores en la carga
 	    if (isset($_FILES["archivo"]) && $_FILES["archivo"]["error"] == UPLOAD_ERR_OK) {
@@ -1347,8 +1765,7 @@
 	        }
 	        
 	        // INICIA BUSQUEDA PARA CREACION DE CODIGO SEGUN LAS SIGLAS RECIBIDAS
-	        $codigo = $_POST["codigo"];
-	//error_log("CODIGO: $codigo");
+	        
 	        $query_codigo = "
 				SELECT IFNULL(
 				(SELECT 
@@ -1365,11 +1782,33 @@
 	        $result = $execute_query_codigo->fetch_array();
 	        $correlativo_txt = $result['codigo'];
 	        $codigo .= $correlativo_txt;
-	//error_log("CODIGO: $codigo"); 
-	        $quien_elabora = $_POST["quien_elabora"];
-	        $quien_revisa = $_POST["quien_revisa"];
-	        $quien_aprueba = $_POST["quien_aprueba"];
-	        $quien_visualiza = $_POST["quien_visualiza"];
+//error_log("CODIGO: $codigo"); 
+	        
+	        if(isset($_POST["quien_elabora"])){
+	        	$quien_elabora = $_POST["quien_elabora"];
+	        }else{
+	        	$quien_elabora = "";
+	        }
+
+	        if(isset($_POST["quien_revisa"])){
+	        	$quien_revisa = $_POST["quien_revisa"];
+	        }else{
+	        	$quien_revisa = "";
+	        }
+
+	        if(isset($_POST["quien_aprueba"])){
+	        	$quien_aprueba = $_POST["quien_aprueba"];
+	        }else{
+	        	$quien_aprueba = "";
+	        }
+	        
+	        if(isset($_POST["quien_visualiza"])){
+	        	$quien_visualiza = $_POST["quien_visualiza"];
+	        }else{
+	        	$quien_visualiza = "";
+	        }
+	        
+	       
 	        $quien_imprime = $_POST["quien_imprime"];
 
 	        // Obtiene la información del archivo
@@ -1387,40 +1826,44 @@
 	        //$ruta_destino = "../../../pages/newdocuments/" . $archivo_nombre;
 	        $ruta_destino = "../../../pages/newdocuments/" . $new_name;
 			
+	        // Dara un error al revisar que quien elabora no esta vacio
+	        if($quien_elabora !== "" && $quien_revisa !== "" && $quien_aprueba !== "" && $quien_visualiza !== ""){
+	        	// Verifica si el archivo lleva la extención correcta.
+				if (in_array($ext,$valid_ext)){
+					// Mueve el archivo cargado a la ubicación de destino
+			        if (move_uploaded_file($archivo_tmp_name, $ruta_destino)) {
 
-			// Verifica si el archivo lleva la extención correcta.
-			if (in_array($ext,$valid_ext)){
-				// Mueve el archivo cargado a la ubicación de destino
-		        if (move_uploaded_file($archivo_tmp_name, $ruta_destino)) {
-
-		            // Prepara la consulta SQL para insertar en la tabla documentos
+			            // Prepara la consulta SQL para insertar en la tabla documentos
 //error_log("Tipo de documento: $id_tipo_documento");
-		            if ($id_tipo_documento != 0){
-		            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, id_tipo_documento, version, codigo, alcance, quien_elabora, quien_revisa, quien_aprueba, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso', $id_tipo_documento, '$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, $quien_aprueba, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
-		            }else{
-		            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, version, codigo, alcance, quien_elabora, quien_revisa, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso','$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
-		            }
-		            
-//error_log($sql);
+			            if ($id_tipo_documento != 0){
+			            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, id_tipo_documento, version, codigo, alcance, quien_elabora, quien_revisa, quien_aprueba, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso', $id_tipo_documento, '$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, $quien_aprueba, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
+			            }else{
+			            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, version, codigo, alcance, quien_elabora, quien_revisa, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso','$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
+			            }
+			            
+	//error_log($sql);
 
-		            $execute_query = $conn->query($sql);
+			            $execute_query = $conn->query($sql);
 
-		            if ($execute_query) {
-		               
-		                $message = "Documento creado exitosamente.";
-		               
-		            } else {
-		                // Error en la preparación de la consulta SQL
-		                $error = "Error en la preparación de la consulta SQL: " . $conn->error;;
-		            }
+			            if ($execute_query) {
+			               
+			                $message = "Documento creado exitosamente.";
+			               
+			            } else {
+			                // Error en la preparación de la consulta SQL
+			                $error = "Error en la preparación de la consulta SQL: " . $conn->error;;
+			            }
 
-		        } else {
-		            // Error al mover el archivo
-		            $error = "Error al mover el archivo a la ubicación de destino.";
-		        }
-			}else{
-				$error = "El archivo no es PDF ni Word";
-			}
+			        } else {
+			            // Error al mover el archivo
+			            $error = "Error al mover el archivo a la ubicación de destino.";
+			        }
+				}else{
+					$error = "El archivo no es PDF ni Word";
+				}
+	        }else{
+	        	$error = "Debes elegir quien elabora, quien revisa, quien aprueba y quien visualiza!";
+	        }
 			
 	    } else {
 	        // No se ha subido ningún archivo o hubo un error en la carga
