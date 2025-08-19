@@ -58,20 +58,12 @@ function load_sidebar(){
 
 function buildSidebar(data) {
     var flagManto = false;
+    var mantoCount = 0;
     var sidebarHTML = "<!-- Sidebar Menu -->"+
       "<nav class=\"mt-2\">"+
         "<ul class=\"nav nav-pills nav-sidebar flex-column\" data-widget=\"treeview\" role=\"menu\" data-accordion=\"false\">";
 
-    var sidebarHTMLmantenimiento = "<li class=\"nav-item has-treeview\">"+
-            "<a href=\"#\" class=\"nav-link\">"+
-              "<i class=\"nav-icon fas fa-copy\"></i>"+
-              "<p>"+
-                "Mantenimiento"+
-                "<i class=\"fas fa-angle-left right\"></i>"+
-                "<span class=\"badge badge-info right\">7</span>"+
-              "</p>"+
-            "</a>"+
-            "<ul class=\"nav nav-treeview\">";
+    var sidebarHTMLmantenimiento = "";
 
     data.forEach(function(privilege) {
         // Comprueba si la ruta contiene "manto" para agregar al submenú de Mantenimiento
@@ -81,6 +73,7 @@ function buildSidebar(data) {
             sidebarHTMLmantenimiento += buildMenuItem(privilege);   
             sidebarHTMLmantenimiento += "</li>";
             flagManto = true;
+            mantoCount++;
         } else {
             sidebarHTML += "<li class=\"nav-item\">";
             sidebarHTML += buildMenuItem(privilege);
@@ -88,12 +81,21 @@ function buildSidebar(data) {
         }
     });
 
-    sidebarHTMLmantenimiento += "</ul></li>";
-
     if(flagManto){
-      sidebarHTML += sidebarHTMLmantenimiento + "</ul></nav>";  
+        var mantoHeader = "<li class=\"nav-item has-treeview\">"+
+                "<a href=\"#\" class=\"nav-link\">"+
+                  "<i class=\"nav-icon fas fa-copy\"></i>"+
+                  "<p>"+
+                    "Mantenimiento"+
+                    "<i class=\"fas fa-angle-left right\"></i>"+
+                    "<span class=\"badge badge-info right\">" + mantoCount + "</span>"+
+                  "</p>"+
+                "</a>"+
+                "<ul class=\"nav nav-treeview\">";
+        
+        sidebarHTML += mantoHeader + sidebarHTMLmantenimiento + "</ul></li></ul></nav>";  
     }else{
-      sidebarHTML += "</ul></nav>";
+        sidebarHTML += "</ul></nav>";
     }
     
     return sidebarHTML;

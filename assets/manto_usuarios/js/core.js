@@ -2,7 +2,7 @@ $(function(){
 
     sidebar();    
     load_region_select();
-    load_sucursal_select();
+    load_departamento_select();
     load_roles_select();
     load_list();
 
@@ -52,7 +52,7 @@ $(function(){
                         }
                         if (index == 'sucursal_id') {
                             var sucursal_id = data;
-                            fill_select(sucursal_id,'select_sucursal','sucursal');
+                            fill_select(sucursal_id,'select_departamento','sucursal');
                         }
                         if (index == 'rol_id') {
                             var rol_id = data;
@@ -103,7 +103,7 @@ function modificar_usuario(){
     var nombre = $('#nombre').val();
     var apellido = $('#apellido').val();
     var select_region = $('#select_region').val();
-    var select_sucursal = $('#select_sucursal').val();
+    var select_departamento = $('#select_departamento').val();
     var select_rol = $('#select_rol').val();
     var pass1 = $('#pass1').val();
     var pass2 = $('#pass2').val();
@@ -118,7 +118,7 @@ function modificar_usuario(){
             nombre,
             apellido,
             select_region,
-            select_sucursal,
+            select_departamento,
             select_rol,
             pass1,
             pass2,
@@ -316,7 +316,7 @@ function create_user() {
     var email       = $('#email');
     var foto        = $('#foto');
     var region      = $('#select_region');
-    var sucursal    = $('#select_sucursal');
+    var departamento = $('#select_departamento');
     var rol         = $('#select_rol');
     var status      = $('#select_estatus');
     var pass1       = $('#pass1');
@@ -336,7 +336,7 @@ function create_user() {
             email: email.val(),
             foto: foto.val(),
             region: region.val(),
-            sucursal: sucursal.val(),
+            sucursal: departamento.val(),
             rol: rol.val(),
             status: status.val(),
             pass1: pass1.val(),
@@ -354,7 +354,7 @@ function create_user() {
                 email.val('');
                 foto.val('');
                 load_region_select();
-                load_sucursal_select();
+                load_departamento_select();
                 load_roles_select();
                 pass1.val('');
                 pass2.val('');
@@ -388,20 +388,20 @@ function load_roles_select() {
     });
 }
 
-function load_sucursal_select() {
+function load_departamento_select() {
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
         type: "POST",
         url: "../assets/all/php/services.php",
         data: {
-            option: 'cargar_select_sucursal'
+            option: 'cargar_select_departamento'
         },
         dataType: "json",
         success: function (response) {
             if (response.error === '') {
                 //alert('Estado actualizado correctamente.');
-                $('#select_sucursal').empty();
-                $('#select_sucursal').html(response.html);
+                $('#select_departamento').empty();
+                $('#select_departamento').html(response.html);
             } else {
                 alert(response.error);
             }

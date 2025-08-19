@@ -61,13 +61,13 @@
 			case 'cambio_de_status_region':
 		        mregion_cds_Function(); 
 		        break;
-		    case 'crear_sucursal':
+		    case 'crear_departamento':
 		        ms_cs_Function(); 
 		        break;
-		    case 'load_sucursal_list':
+		    case 'load_departamento_list':
 				ms_lsl_Function();
 				break;
-			case 'cambio_de_status_sucursal':
+			case 'cambio_de_status_departamento':
 		        ms_cds_Function(); 
 		        break;
 		    case 'crear_tipo_docto':
@@ -85,7 +85,7 @@
 		    case 'cargar_select_region':
 		        mu_csr_Function(); 
 		        break;
-		    case 'cargar_select_sucursal':
+		    case 'cargar_select_departamento':
 		        mu_css_Function(); 
 		        break;
 		    case 'crear_usuario':
@@ -2449,6 +2449,8 @@ error_log($query);
 				AND status = 1
 				AND nombre_opcion_privilegio <> 'AprobaciÃ³n'
 				AND nombre_opcion_privilegio <> 'Documentos externos'
+				AND nombre_opcion_privilegio <> 'Región'
+				AND nombre_opcion_privilegio <> 'RegiÃ³n'
 	   		";
 //error_log($query);
 		    $result = $conn->query($query);
@@ -2935,12 +2937,12 @@ error_log($query);
 			$execute_query = $conn->query($query);
 
 			if ($execute_query) {
-	            $message = 'Sucursal agregada correctamente en la base de datos.';
+	            $message = 'Departamento agregado correctamente en la base de datos.';
 	        } else {
-	            $error = 'Error crear la sucursal en la base de datos: ' . $conn->error;
+	            $error = 'Error crear el departamento en la base de datos: ' . $conn->error;
 	        }
 		}else {
-	        $error = 'Falta información requerida para la creación de la sucursal.';
+	        $error = 'Falta información requerida para la creación del departamento.';
 	    }
 
 		$jsondata['message'] = $message;
