@@ -92,9 +92,7 @@ function renderTable() {
     tableBody.empty();
 
     if (allData.length === 0) {
-
         tableBody.append('<tr><td colspan="5">No se encontraron tipos de documentos.</td></tr>');
-
         return;
     }
 
@@ -105,10 +103,8 @@ function renderTable() {
     $.each(pageData, function (index, tipo_docto) {
         var row = $('<tr>');
         row.append('<td>' + (start + index + 1) + '.</td>');
-
         row.append('<td id="nombre_' + tipo_docto.id + '">' + decodeURI(escape(tipo_docto.nombre)) + '</td>');
         row.append('<td id="siglas_' + tipo_docto.id + '">' + decodeURI(escape(tipo_docto.siglas)) + '</td>');
-
         
         var switchHtml = '<div class="form-group">' +
             '<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">' +
@@ -131,7 +127,6 @@ function renderTable() {
                         '<i class="fas fa-edit"></i> Editar</button>';
         row.append('<td>' + editButton + '</td>');
         
-
         tableBody.append(row);
     });
 }
@@ -176,7 +171,6 @@ function changePage(page) {
     renderTable();
     renderPagination();
 }
-
 
 function editarTipoDocto(id) {
     var nombreActual = $('#nombre_' + id).text();
