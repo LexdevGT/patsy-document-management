@@ -184,6 +184,15 @@
 			case 'update_region':
 				mr_ur_Function();
 				break;
+			case 'cargar_select_pendientes':
+				cd_csp_Function();
+				break;
+			case 'revisar_obtener_path_documento':
+				r_dd_function();
+				break;
+			case 'obtener_info_pendientes':
+				cd_oip_function();
+				break;
 		}
 	}
 
@@ -206,6 +215,162 @@
 
 		$jsondata['message'] = $message;
 		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function cd_oip_function(){
+		global $conn;
+		$jsondata  = array();
+		$error 	   = '';
+		$message   = '';
+		$html 	   = '';
+		$data_rows = array();
+
+
+		// Este query lista todos los documentos en estado de "En Documentación"
+		$query = "SELECT quien_visualiza,quien_imprime 
+					FROM documentos d 
+					WHERE id = $id;
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			
+			while($row = $execute_query->fetch_array()){
+				$visualizan	= $row['quien_visualiza'];
+				$imprimen = $row['quien_imprime'];
+				$data_rows[] = array(
+					'visualizan' => $visualizan,
+					'imprimen' => $imprimen
+				);
+			}
+	error_log(print_r($data_rows,true));
+			/*
+			$query_select = "SELECT nombre, apellido
+				FROM users u 
+				WHERE u.id IN ($data_rows['visualizan'])
+				UNION 
+				SELECT nombre, apellido
+				FROM users u 
+				WHERE u.id NOT IN ($data_rows['imprimen']);
+				 ";
+			
+			$execute_query = $conn->query($query_select);
+			if($execute_query){
+				//$html .= "<option value='0'>Selecciona un usuario...</option>";
+				while($row = $execute_query->fetch_array()){
+					$id 	= $row['id'];
+					$nombre = $row['nombre'] . ' ' . $row['apellido'];
+					//$html .= "<option value='$id'>$nombre</option>";	
+					$data_rows[] = array(
+						'id' => $id,
+						'nombre' => $nombre
+					);
+				}
+				
+			}else{
+				$error = 'Error cargando los usuarios de base de datos: '.$conn->error;
+			}
+			*/
+		}else{
+			$error = 'Error cargando los documentos pendientes de base de datos: '.$conn->error;
+		}
+
+
+		$jsondata['html'] 		= $data_rows;
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function r_dd_function() {
+		//http://localhost/Patsy-DM/pages/newdocuments/Test%20de%20descarga%20%232.docx
+		//http://localhost/Patsy-DM/pages/newdocuments/Test%20de%20descarga%20
+	    global $conn;
+	    $jsondata = array();
+	    $error = '';
+	    $message = '';
+
+	    if (isset($_POST['id'])) {
+	        $id = $_POST['id'];
+	        $call_document_path = "
+	            SELECT path_documento
+	            FROM documentos
+	            WHERE id = $id
+	        ";
+	        $query_execute = $conn->query($call_document_path);
+	        $result = $query_execute->fetch_array();
+	        $path = $result['path_documento'];
+
+	    //error_log("PATH: $path");
+
+	        // Obtener la URL base del servidor
+	        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+	        $host = $_SERVER['HTTP_HOST'];
+	        $path = trim($path, '/'); // Elimina cualquier barra inclinada al principio o al final
+	    //error_log("TRIm PATH: $path");
+	    //error_log("HOST: $host");
+	        // Construir la URL completa del archivo
+	        $full_url = $protocol . $host . '/' . $path;
+	     //error_log("FULL URL: $full_url");
+	        // Obtener la información de la ruta
+	        $info = pathinfo($full_url);
+	        $filename = $info['basename'];
+
+        //error_log("INFO: ".print_r($info, true));
+        //error_log("FILENAME: $filename");
+        //error_log("SERVER CHECK: ".$_SERVER['DOCUMENT_ROOT'] . '/' . $path );
+	       // if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/' . $path)) {
+
+	            //$jsondata['path'] = $full_url;
+        		$jsondata['path'] = $path;
+	            $jsondata['filename'] = $filename;
+	        //} else {
+	            //$error = 'El archivo no existe.';
+	        //}
+	    } else {
+	        $error = 'No se proporcionó un ID válido.';
+	    }
+
+	    $jsondata['error'] = $error;
+	    echo json_encode($jsondata);
+	}
+
+	function cd_csp_Function(){
+		global $conn;
+		$jsondata  = array();
+		$error 	   = '';
+		$message   = '';
+		$html 	   = '';
+		$data_rows = array();
+
+		// Este query lista todos los documentos en estado de "En Documentación"
+		$query = "SELECT id, nombre, codigo 
+					FROM documentos d 
+					WHERE status = 13;
+				 ";
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			
+			while($row = $execute_query->fetch_array()){
+				$id 	= $row['id'];
+				$nombre = $row['nombre'];
+				$codigo = $row['codigo'];	
+				$data_rows[] = array(
+					'id' => $id,
+					'nombre' => $nombre,
+					'codigo' => $codigo
+				);
+			}
+			
+		}else{
+			$error = 'Error cargando los documentos pendientes de base de datos: '.$conn->error;
+		}
+
+		$jsondata['html'] 		= $data_rows;
+		$jsondata['message'] 	= $message;
+		$jsondata['error']   	= $error;
 		echo json_encode($jsondata);
 	}
 
@@ -851,11 +1016,11 @@
 		global $conn;
 	
 		switch($solicitud){
-			case 9:
+			case 1:
 				$carpetaDestino = "../../../pages/documents/";
 				$txt = 'oficial';
 				break;
-			case 4:
+			case 14:
 				$carpetaDestino = "../../../pages/obsoletos/";
 				$txt = 'obsoleto';
 				break;
@@ -1030,6 +1195,7 @@
 					ON documentos.quien_revisa = ua.id
 				) base
 				WHERE codigo LIKE '%$busqueda%'
+				OR observacion LIKE '%$busqueda%'
 				ORDER BY date_time
 				
 					    ";
@@ -1298,8 +1464,12 @@
 		$message  = '';
 		$html 	  = '';
 
-		$query = "SELECT id,nombre FROM status_documentos
-				 ";
+		$query = "
+			SELECT id,nombre 
+			FROM status_documentos
+			WHERE id NOT IN (1,10,13,12,11,5,9)
+			ORDER BY id
+		";
 		$execute_query = $conn->query($query);
 
 		if($execute_query){
@@ -1332,7 +1502,128 @@
 		$message  = '';
 		$id_revision = $_SESSION['id_u'];
 		$rol = $_SESSION['rol_id'];
+
+		if(isset($_POST['id'])){
+			$id = $_POST['id'];
+		}else{
+			$id = '';
+		}
+
+		//verificar estatus del documento para saber su siguiente paso
+		/*
+			1) Si esta en Solicitud de algo pasar a En Revisión
+			2) Si esta en Revisión pasar a En Aprobación
+			3) Si esta en Aprobación pasarlo a Implementado y mover el archivo a Documentos implementados
+		*/
 		
+		$query = "
+			SELECT status 
+			FROM documentos
+			WHERE id = $id
+		";
+
+		$execute_query = $conn->query($query);
+		$fila          = $execute_query->fetch_array();
+		$status 	   = $fila['status'];
+error_log($query);
+		/*
+		if($status == 2){
+			$change_status = 12
+		}
+		*/
+		
+		switch ($status) {
+			case 2:
+				$change_status = 13;
+
+				$query = "UPDATE documentos
+					SET status = $change_status, 
+					status_revision = 1
+					WHERE id = $id;
+				 ";
+				break;
+			case 4:
+				$change_status = 12;
+
+				$query = "UPDATE documentos
+					SET status = $change_status, 
+					status_revision = 1
+					WHERE id = $id;
+				";
+				break;
+			case 3:
+				$change_status = 13;
+				
+				$query = "UPDATE documentos
+					SET status = $change_status, 
+					status_revision = 1
+					WHERE id = $id;
+				 ";
+				break;
+			case 13:
+				$change_status = 12;
+
+				$query = "UPDATE documentos
+					SET status = $change_status, 
+					status_revision = 1
+					WHERE id = $id;
+				";
+				break;
+			case 12:
+				$change_status = 10;
+				
+				$query = "UPDATE documentos
+					SET status = $change_status, 
+					status_revision = 1,
+					fecha_revision = NOW(),
+					quien_revisa = $id_revision
+					WHERE id = $id;
+				 ";
+				break;
+			case 10:
+				$change_status = 1;
+				
+				$query = "UPDATE documentos
+					SET status = $change_status, 
+					status_revision = 1,
+					fecha_aprobacion = NOW(),
+					quien_aprueba = $id_revision
+					WHERE id = $id;
+				 ";
+				break;
+		}
+//error_log($query);
+		$execute_query = $conn->query($query);
+
+		if($execute_query){
+			//error_log("ROL: $rol");
+			if($change_status == 1){
+				//$message = moverArchivo($id,$solicitud);
+				$message = moverArchivo($id,$change_status);
+			}else{
+				$message = 'Cambio de estatus del documento exitoso!';
+			}
+			
+			$query = "
+				SELECT codigo, quien_elabora 
+				FROM documentos d 
+				WHERE id = $id
+			";
+
+			$execute_query = $conn->query($query);
+			$fila 		   = $execute_query->fetch_array();
+			$codigo 	   = $fila['codigo'];
+			$quien_elabora = $fila['quien_elabora'];
+			$observacion = "Documento, cambio de estado!";
+            $query = "INSERT INTO history (id_documento,observacion,status,status_history,date_time,id_solicitante,id_aprobar) VALUES ('$codigo','$observacion',$change_status,1,NOW(),$quien_elabora,$id_revision);
+			";
+
+			$execute_query = $conn->query($query);
+		}else{
+			$error = 'No se pudo aprobar el documento: '.$conn->error;
+		}
+
+		/*
 		if(isset($_POST['id'])){
 			$id = $_POST['id'];
 		}else{
@@ -1384,6 +1675,7 @@
 		}else{
 			$error = 'No se pudo aprobar el documento: '.$conn->error;
 		}
+		*/
 		$jsondata['rol'] = $rol;
 		$jsondata['message'] = $message;
 		$jsondata['error']   = $error;
@@ -1454,20 +1746,30 @@
 			$result = $query_execute->fetch_array();
 			//$path = $result['path_documento'];
 			$path = realpath($result['path_documento']);
+
+			// Obtener la información de la ruta
+			$info = pathinfo($path);
+			// Obtener la extensión del archivo
+			$extension = $info['extension'];
+//error_log("PATH: $path, EXTENCION: $extension");
+			if($extension != 'pdf'){
+				//Crear un objeto de PHPWord
+				$phpWord = \PhpOffice\PhpWord\IOFactory::load($path);
+
+				 // Guardar el archivo como HTML temporal
+		        $tempHtmlFile = 'temp.html';
+		        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
+		        $objWriter->save($tempHtmlFile);
+
+		        // Leer el contenido del archivo HTML generado
+		        $htmlContent = file_get_contents($tempHtmlFile);
+		        unlink($tempHtmlFile); // Eliminar el archivo temporal
+
+		        $message = $htmlContent;
+			}else{
+				$message = 'El archivo es PDF no se puede visualizar en el visor!';
+			}
 			
-			//Crear un objeto de PHPWord
-			$phpWord = \PhpOffice\PhpWord\IOFactory::load($path);
-
-			 // Guardar el archivo como HTML temporal
-	        $tempHtmlFile = 'temp.html';
-	        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'HTML');
-	        $objWriter->save($tempHtmlFile);
-
-	        // Leer el contenido del archivo HTML generado
-	        $htmlContent = file_get_contents($tempHtmlFile);
-	        unlink($tempHtmlFile); // Eliminar el archivo temporal
-
-	        $message = $htmlContent;
 
 	        //error_log($path);
 		}else {
@@ -1656,6 +1958,8 @@
 	    $u = $_SESSION['id_u'];
 	    $rol = $_SESSION['rol_id'];
 
+// LOGICA ANTERIOR
+/*
 	    if($rol != 14){
 	    	$query = "
 	    		SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud,sd.id AS id_solicitud
@@ -1678,11 +1982,60 @@
 				AND status NOT IN (5,10,11)  
 	    	";
 	    }
-	    
+*/
+
+	$query = "
+		SELECT 
+	    CASE 
+	        WHEN EXISTS (
+	            SELECT * 
+	            FROM privilegios 
+	            WHERE id_rol = $rol AND id_privilegio = 1
+	        ) THEN 'Puede crear'
+	        WHEN EXISTS (
+	            SELECT * 
+	            FROM privilegios 
+	            WHERE id_rol = $rol AND id_privilegio = 20
+	        ) THEN 'Puede aprobar'
+	        ELSE 'No puede crear'
+	    END AS mensaje
+    ";
 //error_log($query);
+ 	$execute_query = $conn->query($query);
+ 	$result = $execute_query->fetch_array();
+ 	$mensaje = $result['mensaje'];
+
+ 	if($mensaje == "Puede crear"){
+ 		$query = "
+ 			SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud,sd.id AS id_solicitud
+			FROM documentos d
+			INNER JOIN status_documentos sd 
+			ON d.status = sd.id 
+			WHERE d.status IN (2,3,4)
+ 		";
+ 	}elseif($mensaje == "Puede aprobar"){
+ 		$query = "
+ 			SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud,sd.id AS id_solicitud
+			FROM documentos d
+			INNER JOIN status_documentos sd 
+			ON d.status = sd.id 
+			WHERE d.status IN (10)
+ 		";
+ 	}else{
+ 		$query = "
+ 			SELECT d.id,d.nombre,d.codigo,sd.nombre AS tipo_de_solicitud,sd.id AS id_solicitud
+			FROM documentos d
+			INNER JOIN status_documentos sd 
+			ON d.status = sd.id 
+			WHERE d.status IN (12)
+			AND d.quien_revisa = $u
+ 		";
+ 	}
+
+//error_log($mensaje);
 	    // Ejecuta la consulta y verifica si se ejecutó correctamente
 	    $execute_query = $conn->query($query);
-
+//error_log($query);
 	    if ($execute_query) {
 	        // La consulta se ejecutó con éxito, ahora puedes obtener los resultados
 	        $rows = array();
@@ -1704,7 +2057,12 @@
 	        }
 
 	        // Agrega los resultados al arreglo jsondata
-	        $jsondata['data'] = $data_rows;
+	        if(isset($data_rows)){
+	        	$jsondata['data'] = $data_rows;
+	        }else{
+	        	$jsondata['data'] = "";
+	        }
+	        
 	        $message = 'Consulta ejecutada con éxito.';
 	    } else {
 	        // La consulta falló, establece un mensaje de error
@@ -1724,7 +2082,33 @@
 		$error 	  = '';
 		$message  = '';
 		$codigo = $_POST["codigo"];
-	//error_log("CODIGO: $codigo");
+		if(isset($_SESSION['id_u'])){
+			$solicitante = $_SESSION['id_u'];	
+		}
+		
+		$quien_elabora = $solicitante;
+		if(isset($_POST['documento_pendiente'])){
+			$documento_pendiente = $_POST['documento_pendiente'];
+		}else{
+			$documento_pendiente = 0;
+		}
+		
+		if (isset($_POST['codigo_pendiente'])) {
+			$codigo_pendiente = $_POST['codigo_pendiente'];
+
+			$query = "
+				SELECT codigo 
+				FROM documentos d 
+				WHERE id = $codigo_pendiente
+			";
+
+			$execute_query = $conn->query($query);
+			$fila = $execute_query->fetch_array();
+			$codigo_antiguo = $fila['codigo'];
+		}else{
+			$codigo_antiguo = "";
+		}
+		
 
 		// Verifica si se ha subido un archivo y no hay errores en la carga
 	    if (isset($_FILES["archivo"]) && $_FILES["archivo"]["error"] == UPLOAD_ERR_OK) {
@@ -1783,12 +2167,13 @@
 	        $correlativo_txt = $result['codigo'];
 	        $codigo .= $correlativo_txt;
 //error_log("CODIGO: $codigo"); 
-	        
+	        /*
 	        if(isset($_POST["quien_elabora"])){
 	        	$quien_elabora = $_POST["quien_elabora"];
 	        }else{
 	        	$quien_elabora = "";
 	        }
+			*/
 
 	        if(isset($_POST["quien_revisa"])){
 	        	$quien_revisa = $_POST["quien_revisa"];
@@ -1826,8 +2211,10 @@
 	        //$ruta_destino = "../../../pages/newdocuments/" . $archivo_nombre;
 	        $ruta_destino = "../../../pages/newdocuments/" . $new_name;
 			
+//error_log("Quien elabora: $quien_elabora, Quien revisa: $quien_revisa, Quien Aprueba: $quien_aprueba, Quien visualiza: $quien_visualiza");
 	        // Dara un error al revisar que quien elabora no esta vacio
-	        if($quien_elabora !== "" && $quien_revisa !== "" && $quien_aprueba !== "" && $quien_visualiza !== ""){
+	        //if($quien_elabora !== "" && $quien_revisa !== "" && $quien_aprueba !== "" && $quien_visualiza !== ""){
+			if($quien_elabora !== "" && $quien_revisa !== "" && $quien_visualiza !== "" && $nombre !==""){
 	        	// Verifica si el archivo lleva la extención correcta.
 				if (in_array($ext,$valid_ext)){
 					// Mueve el archivo cargado a la ubicación de destino
@@ -1840,14 +2227,54 @@
 			            }else{
 			            	$sql = "INSERT INTO documentos (nombre, proceso_principal, otros_procesos, sub_proceso, version, codigo, alcance, quien_elabora, quien_revisa, path_documento, quien_visualiza, quien_imprime, status,status_revision,fecha) VALUES ('$nombre', '$proceso_principal', '$otros_procesos', '$subproceso','$version', '$codigo', '$alcance', $quien_elabora, $quien_revisa, '$ruta_destino', '$quien_visualiza', '$quien_imprime', $solicitud,0,NOW())";
 			            }
-			            
-	//error_log($sql);
+			      			if($documento_pendiente>0){
+			      				$query = "
+				      				UPDATE documentos 
+									SET status = 11
+									WHERE id = $documento_pendiente
+				      			"; 
+				      			//error_log($query);
+				      			$run = $conn->query($query);
+			      			}
+			      			     
 
-			            $execute_query = $conn->query($sql);
+						try {
+							$execute_query = $conn->query($sql);
+						} catch (Exception $e) {
+							$error = "Error: $e";
+						}
+			            
 
 			            if ($execute_query) {
-			               
-			                $message = "Documento creado exitosamente.";
+			            	if (isset($_POST['documentacion'])) {
+			            		if($codigo_antiguo != ""){
+			            			$observacion = "El código: $codigo_antiguo se documento y paso a tener el código: $codigo";
+			            		}else{
+			            			$observacion = "El documento ahora tiene el código: $codigo";
+			            		}
+			            	   	
+			            	   	// ESTE QUERY CAMBIA EL ESTATUS A CREADO PARA QUE YA NO APAREZCA EN EL SELECT DE PENDIENTES DEL MENU DE "CREACION DE DOCUMENTO"
+			            	   	$query_estatus_antiguo = "
+			            	   		UPDATE documentos 
+									SET status = 15
+									WHERE codigo = '$codigo_antiguo'
+			            	   	";
+			            	   	$execute_query = $conn->query($query_estatus_antiguo);
+			            	   }else{
+			            	   	$observacion = "El usuario con id: $quien_elabora crea una solicitud";
+			            	   }   
+			                $message = "Solicitud creada exitosamente.";
+			                
+			                $query = "INSERT INTO history (id_documento,observacion,status,status_history,date_time,id_solicitante,id_aprobar) VALUES ('$codigo','$observacion',$solicitud,1,NOW(),$quien_elabora,$quien_revisa);
+							";
+
+							try {
+								$execute_query = $conn->query($query);
+							} catch (Exception $e) {
+								$error = "Error: $e";
+							}
+							
+//error_log($query);
 			               
 			            } else {
 			                // Error en la preparación de la consulta SQL
@@ -1862,7 +2289,7 @@
 					$error = "El archivo no es PDF ni Word";
 				}
 	        }else{
-	        	$error = "Debes elegir quien elabora, quien revisa, quien aprueba y quien visualiza!";
+	        	$error = "Debes elegir un nombre, quien elabora, quien revisa, quien aprueba y quien visualiza!";
 	        }
 			
 	    } else {
@@ -2014,6 +2441,7 @@
 				ON opciones_privilegios.id_opcion_privilegio = p.id_privilegio
 				WHERE p.id_rol = $rol_id
 				AND status = 1
+				AND nombre_opcion_privilegio <> 'AprobaciÃ³n'
 	   		";
 //error_log($query);
 		    $result = $conn->query($query);

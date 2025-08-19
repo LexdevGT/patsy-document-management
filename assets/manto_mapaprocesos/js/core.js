@@ -34,26 +34,24 @@ $(function() {
     });
 
     $(document).on('click', '.edit-folder', function(event) {
-
         event.stopPropagation();
         var folderPath = $(this).data('folder');
-        //alert('Click Edit: '+folderPath);
         $('#newFolderName').val(''); // Limpiar el campo de entrada antes de mostrarlo
-        $('#renameFolderForm').data('folder', folderPath); // Almacenar la ruta de la carpeta en el formulario
-        $('#renameFolderForm').removeClass('d-none'); // Mostrar el formulario
+        $('#renameFolderModal').data('folder', folderPath); // Almacenar la ruta de la carpeta en el modal
+        $('#renameFolderModal').modal('show'); // Mostrar el modal
     });
 
     $('#confirmRename').click(function() {
-        var folderPath = $('#renameFolderForm').data('folder');
+        var folderPath = $('#renameFolderModal').data('folder');
         var newFolderName = $('#newFolderName').val();
 
         if (newFolderName.trim() !== '') {
             renameFolder(folderPath, newFolderName);
+            $('#renameFolderModal').modal('hide'); // Ocultar el modal después de cambiar el nombre
         } else {
             alert('Ingresa un nuevo nombre de carpeta válido.');
         }
 
-        $('#renameFolderForm').addClass('d-none'); // Ocultar el formulario después de cambiar el nombre
         $('#newFolderName').val(''); // Limpiar el campo de entrada
     });
 

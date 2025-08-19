@@ -96,9 +96,28 @@
         <div id="folderList">
             <!-- El contenido se cargará aquí utilizando jQuery -->
         </div>
-        <div id="renameFolderForm" class="d-none">
-            <input type="text" id="newFolderName" placeholder="Nuevo nombre de carpeta">
-            <button id="confirmRename" class="btn btn-primary">Confirmar</button>
+        <!-- Modal para renombrar carpeta -->
+        <div class="modal fade" id="renameFolderModal" tabindex="-1" role="dialog" aria-labelledby="renameFolderModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="renameFolderModalLabel">Renombrar Carpeta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="newFolderName">Nuevo nombre de carpeta:</label>
+                  <input type="text" class="form-control" id="newFolderName" placeholder="Ingresa el nuevo nombre">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmRename">Confirmar</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

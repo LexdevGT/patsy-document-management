@@ -6,9 +6,4 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ZendPdf\\' => array($vendorDir . '/zendframework/zendpdf/library'),
-    'Symfony' => array($vendorDir . '/symfony/symfony/src'),
-    'Ps\\PdfBundle' => array($vendorDir . '/psliwa/pdf-bundle'),
-    'PHPPdf' => array($vendorDir . '/psliwa/php-pdf/lib'),
-    'Imagine' => array($vendorDir . '/psliwa/php-pdf/lib'),
 );

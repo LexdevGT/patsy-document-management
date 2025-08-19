@@ -85,8 +85,9 @@ function load_documentos_control_cambios() {
                     row.append('<td>'+info.observacion+'</td>');
                     row.append('<td>'+decodeURI(escape(info.estado_solicitado))+'</td>');
                     row.append('<td>'+info.fecha_hora_solicitud+'</td>');
-                    row.append('<td>'+decodeURI(escape(info.solicitante))+'</td>');
-                    row.append('<td>'+decodeURI(escape(info.aprueba))+'</td>');
+                    //row.append('<td>'+decodeURI(escape(info.solicitante))+'</td>');
+                    row.append('<td>'+info.solicitante+'</td>');
+                    row.append('<td>'+info.aprueba+'</td>');
                     row.append('</tr>');
                     table.append(row);
                     //console.log(row);
