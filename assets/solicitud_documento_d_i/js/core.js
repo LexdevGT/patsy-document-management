@@ -26,6 +26,32 @@ $(function(){
         load_document_name();  
     });
 
+    // Autocompletado para el input de documento
+    $('#documento').on('input', function(){
+        var keyword = $(this).val();
+        if(keyword.length >= 2) {
+            buscarDocumentos(keyword);
+        } else {
+            $('#documento-suggestions').hide();
+        }
+    });
+
+    // Ocultar sugerencias cuando se hace clic fuera
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.autocomplete-container').length) {
+            $('#documento-suggestions').hide();
+        }
+    });
+
+    // Manejar clic en sugerencias
+    $(document).on('click', '.suggestion-item', function() {
+        var nombre = $(this).data('nombre');
+        var codigo = $(this).data('codigo');
+        $('#documento').val(nombre);
+        $('#codigo').val(codigo);
+        $('#documento-suggestions').hide();
+    });
+
 });
 
 function new_function(){
@@ -171,6 +197,50 @@ function cargar_select_usuarios() {
                 alert(response.error);
                 window.location.replace('solicitud_documento_d_i.html');
             }
+        }
+    });
+}
+
+function buscarDocumentos(keyword) {
+    $.ajax({
+        contentType: 'application/x-www-form-urlencoded',
+        type: 'POST',
+        url: '../assets/all/php/services.php',
+        data: {
+            option: 'buscar_documentos_por_keyword',
+            keyword: keyword
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.error === '') {
+                var suggestions = $('#documento-suggestions');
+                suggestions.empty();
+                
+                if (response.data && response.data.length > 0) {
+                    $.each(response.data, function(index, doc) {
+                        var item = $('<div class="suggestion-item" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee;">')
+                            .data('nombre', doc.nombre)
+                            .data('codigo', doc.codigo)
+                            .html('<strong>' + decodeURI(escape(doc.nombre)) + '</strong><br><small>Código: ' + doc.codigo + '</small>');
+                        
+                        item.hover(
+                            function() { $(this).css('background-color', '#f8f9fa'); },
+                            function() { $(this).css('background-color', 'white'); }
+                        );
+                        
+                        suggestions.append(item);
+                    });
+                    suggestions.show();
+                } else {
+                    suggestions.append('<div style="padding: 8px; color: #6c757d;">No se encontraron documentos</div>');
+                    suggestions.show();
+                }
+            } else {
+                console.error('Error al buscar documentos:', response.error);
+            }
+        },
+        error: function() {
+            console.error('Error en la petición AJAX');
         }
     });
 }
