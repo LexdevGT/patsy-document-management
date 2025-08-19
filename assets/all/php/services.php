@@ -139,6 +139,9 @@
 		    case 'cargar_document_name':
 		    	sddi_cdn_Function();
 		    	break;
+		    case 'buscar_documentos_por_keyword':
+		    	sddi_bdpk_Function();
+		    	break;
 		    case 'history':
 		    	sddi_h_Function();
 		    	break;
@@ -3441,6 +3444,47 @@ error_log($query);
 
 		$jsondata['html'] 	= $html;
 		$jsondata['error'] 	= $error;
+		echo json_encode($jsondata);
+	}
+
+	function sddi_bdpk_Function(){
+		global $conn;
+		$jsondata = array();
+		$error = '';
+		$data = array();
+
+		if (isset($_POST['keyword'])){
+			$keyword = $_POST['keyword'];
+			$keyword = '%' . $keyword . '%';
+			
+			$query = "SELECT id, nombre, codigo FROM documentos 
+					  WHERE nombre LIKE ? 
+					  AND status = 1
+					  ORDER BY nombre 
+					  LIMIT 10";
+			
+			$stmt = $conn->prepare($query);
+			$stmt->bind_param("s", $keyword);
+			$stmt->execute();
+			$result = $stmt->get_result();
+
+			if ($result) {
+				while ($row = $result->fetch_assoc()) {
+					$data[] = array(
+						'id' => $row['id'],
+						'nombre' => $row['nombre'],
+						'codigo' => $row['codigo']
+					);
+				}
+				$jsondata['data'] = $data;
+			} else {
+				$error = 'Error al buscar documentos: ' . $conn->error;
+			}
+		} else {
+			$error = 'Keyword requerido para la búsqueda.';
+		}
+
+		$jsondata['error'] = $error;
 		echo json_encode($jsondata);
 	}
 
