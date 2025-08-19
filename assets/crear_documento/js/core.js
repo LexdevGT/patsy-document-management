@@ -2,6 +2,7 @@ $(function(){
 
     setTimeout(sidebar,600);
     //sidebar();   
+    load_pendientes();
     load_proceso_principal();
     load_tipo_de_documento();
     load_quien_elabora();
@@ -32,6 +33,10 @@ $(function(){
         $('.custom-file-label').html(fileName);
         //console.log(fileName);
     });
+
+    $('#select_pendientes').change(function(){
+        obtener_info_pendientes();
+    });
   
 });
 
@@ -55,8 +60,64 @@ function new_function() {
     });
 }
 
+function obtener_info_pendientes() {
+    var select_html = "<option value='0'>Selecciona un documento pendiente...</option>";
+
+    $.ajax({
+        contentType: 'application/x-www-form-urlencoded',
+        type: 'POST',
+        url: '../assets/all/php/services.php',
+        data: {
+            option: 'obtener_info_pendientes'
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.error === '') {
+                $('#select_quien_visualiza').empty();
+                $.each(response.html, function(index, info) {
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
+                });
+                $('#select_quien_visualiza').html(select_html);
+
+            } else {
+                alert(response.error);
+            }
+        }
+    });
+}
+
+function load_pendientes() {
+    var select_html = "<option value='0'>Selecciona un documento pendiente...</option>";
+
+    $.ajax({
+        contentType: 'application/x-www-form-urlencoded',
+        type: 'POST',
+        url: '../assets/all/php/services.php',
+        data: {
+            option: 'cargar_select_pendientes'
+        },
+        dataType: 'json',
+        success: function (response) {
+            if (response.error === '') {
+                $('#select_pendientes').empty();
+                $.each(response.html, function(index, info) {
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
+                });
+                $('#select_pendientes').html(select_html);
+
+            } else {
+                alert(response.error);
+            }
+        }
+    });
+}
+
 function crear_documento() {
     // Recopila los valores de los campos del formulario
+    //var codigo_pendiente = $('#select_pendientes').val();
+    var documento_pendiente = $('#select_pendientes').val();
     var nombre = $('#nombre').val();
     var proceso_principal = $('#select_proceso_principal').val();
     var otros_procesos = $('#select_otros_procesos').val();
@@ -72,10 +133,9 @@ function crear_documento() {
     var quien_visualiza = $('#select_quien_visualiza').val();
     var quien_imprime = $('#select_quien_imprime').val();
 
-
-
     //alert("Proceso: "+proceso_principal+" tipo documento: " + tipo_documento);
-    if(proceso_principal != 0 && tipo_documento != 0){
+    //if(proceso_principal != 0 && tipo_documento != 0 && codigo_pendiente != 0){
+    if(proceso_principal != 0 && tipo_documento != 0 ){
 
         // Obtén la fecha y hora actual
         var fechaActual = new Date();
@@ -101,11 +161,12 @@ function crear_documento() {
 
         //var codigo = siglas_proceso_principal+'-'+tipo_documento+'-'+formatoFechaHora;
         var codigo = siglas_tipo_documento+'-'+siglas_proceso_principal+'-';
-        //console.log('codigo: '+codigo);
+        
 
         // Creando el objeto FormData y agrego los datos del formulario
         var formData = new FormData();
         formData.append('option', 'crear_documento');
+        //formData.append('codigo_pendiente', codigo_pendiente);
         formData.append('nombre', nombre);
         formData.append('proceso_principal', proceso_principal);
         formData.append('otros_procesos', otros_procesos);
@@ -119,6 +180,15 @@ function crear_documento() {
         formData.append('quien_aprueba', quien_aprueba);
         formData.append('quien_visualiza', quien_visualiza);
         formData.append('quien_imprime', quien_imprime);
+        formData.append('documentacion', 'documentacion');
+        formData.append('solicitud', 12);
+        
+        if(documento_pendiente != 0){
+            formData.append('documento_pendiente', documento_pendiente);
+        }else{
+            formData.append('documento_pendiente', 0);
+        }
+
 
         // Agrega el archivo al objeto FormData
         formData.append('archivo', archivo);
@@ -135,9 +205,12 @@ function crear_documento() {
                 if (response.error === '') {
                     // Los datos se han guardado correctamente, puedes realizar acciones adicionales si es necesario
                     $('#codigo').val(response.codigo);
-                    alert('Documento creado exitosamente');
+                    alert('Documento esperando revisión!');
                     alert('El código de tu documento creado es el siguiente: '+response.codigo+' por si deseas apuntarlo!');
                     // Vuelve a cargar la página
+                    $('#nombre').val("");
+                    $('#codigo').val("");
+                    $('#alcance').val("");
                     location.reload();
                 } else {
                     alert(response.error); // Muestra un mensaje de error si algo salió mal en el servidor
@@ -149,7 +222,7 @@ function crear_documento() {
         });
 
     }else{
-        alert('Se debe elegir proceso principal y tipo de documento para poder crear el archivo!');
+        alert('Se debe elegir documento pendiente, proceso principal y tipo de documento para poder crear el archivo!');
     }
 
 }
@@ -170,7 +243,8 @@ function load_quien_imprime() {
             if (response.error === '') {
                 $('#select_quien_imprime').empty();
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('#select_quien_imprime').html(select_html);
             } else {
@@ -195,7 +269,8 @@ function load_quien_visualiza() {
             if (response.error === '') {
                 $('#select_quien_visualiza').empty();
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('#select_quien_visualiza').html(select_html);
             } else {
@@ -220,7 +295,8 @@ function load_quien_aprueba() {
             if (response.error === '') {
                 $('#select_quien_aprueba').empty();
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('#select_quien_aprueba').html(select_html);
             } else {
@@ -245,7 +321,8 @@ function load_quien_revisa() {
             if (response.error === '') {
                 $('#select_quien_revisa').empty();
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('#select_quien_revisa').html(select_html);
             } else {
@@ -271,7 +348,8 @@ function load_quien_elabora() {
                 $('#select_quien_elabora').empty();
                 //$('#select_quien_elabora').html(response.html);
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    //select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('#select_quien_elabora').html(select_html);
             } else {
@@ -379,5 +457,6 @@ function load_proceso_principal() {
 function sidebar(){
     $('.nav-link').removeClass('active');
     $('.nav-link').find('i.fa-pen-nib').parent().addClass( "active" );
+    
 }
 

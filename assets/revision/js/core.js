@@ -73,16 +73,20 @@ function load_documentos_revision() {
         dataType: 'json',
         success: function (response) {
             if (response.error === '') {
-               $.each(response.data, function(index,info){
+                if(response.data.length > 0){
+                    $.each(response.data, function(index,info){
                     var row = $('<tr>');
-                    row.append('<td>'+info.nombre+'</td>');
-                    row.append('<td>'+info.codigo+'</td>');
-                    row.append('<td>'+decodeURI(escape(info.tipo_de_solicitud))+'</td>');
-                    row.append('<td><a href="revisar.html?id='+info.id+'&s='+info.id_solicitud+'"><i class="fa-2x fas fa-pencil-alt"></i></a><i class="fa-2x fas fa-check-circle ml-2 text-success" onclick="confirmarProcesado(' + info.id + ', \'' + info.nombre + '\')"></i></td>');
-                    row.append('</tr>');
-                    table.append(row);
-                    //console.log(row);
-               });
+                        row.append('<td><a href="revisar.html?id='+info.id+'&s='+info.id_solicitud+'">'+info.nombre+'</a></td>');
+                        row.append('<td>'+info.codigo+'</td>');
+                        row.append('<td>'+decodeURI(escape(info.tipo_de_solicitud))+'</td>');
+                        //row.append('<td><a href="revisar.html?id='+info.id+'&s='+info.id_solicitud+'"><i class="fa-2x fas fa-pencil-alt"></i></a><i class="fa-2x fas fa-check-circle ml-2 text-success" onclick="confirmarProcesado(' + info.id + ', \'' + info.nombre + '\')"></i></td>');
+                        row.append('<td><a href="revisar.html?id='+info.id+'&s='+info.id_solicitud+'"><i class="fa-2x fas fa-pencil-alt"></i></a></td>');
+                        row.append('</tr>');
+                        table.append(row);
+                        //console.log(row);
+                   });
+                }
+               
 
             } else {
                 alert(response.error);

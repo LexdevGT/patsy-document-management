@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="../assets/all/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="../assets/all/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+   <!-- Select2 -->
+  <link rel="stylesheet" href="../assets/all/select2/css/select2.min.css">
+  <link rel="stylesheet" href="../assets/all/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="icon" type="image/x-icon" href="../assets/all/favicon.png">
   <link rel="stylesheet" href="../assets/all/css/adminlte.min.css">
@@ -89,7 +92,7 @@
         <!-- First Row -->
         <div class="row ">
           <div class="col">
-            <label>Estatus:</label>
+            <label>Tipo de solicitud:</label>
           </div>
           <div class="col">
             <label>Proceso:</label>
@@ -131,9 +134,11 @@
           <div class="col">
             <label>Nombre del documento:</label>
           </div>
+          <!--
           <div class="col">
             <label>Solicitante:</label>
           </div>
+          -->
           <div class="col">
             <label>Quien revisa:</label>
           </div>
@@ -152,12 +157,14 @@
           <div class="col">
             <input class="form-control" type="text" placeholder="" id="nombre_docto">
           </div>
+          <!--
           <div class="col">
             <select class="form-control usuarios" id="quien_solicita">
               <option>Selecciona un usuario...</option>
           
             </select>
           </div>
+          -->
           <div class="col">
             <select class="form-control usuarios" id="quien_revisa">
               <option>Selecciona un usuario...</option>
@@ -183,25 +190,13 @@
         <!-- /Row -->
         <!-- Row -->
         <div class="row">
-          <!--
           <div class="col">
-            <select class="form-control usuarios" id="quien_aprueba">
-              <option>Selecciona un usuario...</option>
-             
-            </select>
-          </div>
-          -->
-          <div class="col">
-            <select class="form-control usuarios" id="quien_visualiza">
-              <option>Selecciona un usuario...</option>
-            
-            </select>
+            <select class="select2 form-control usuarios" multiple="multiple" id="quien_visualiza" data-placeholder="Selecciona los usuarios...">
+              </select>
           </div>
           <div class="col">
-            <select class="form-control usuarios" id="quien_imprime">
-              <option>Selecciona un usuario...</option>
-           
-            </select>
+            <select class="select2 form-control usuarios" multiple="multiple" id="quien_imprime" data-placeholder="Selecciona los usuarios...">
+              </select>
           </div>
         </div>
         <!-- /Row -->
@@ -262,6 +257,8 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="../assets/all/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Select2 -->
+<script src="../assets/all/select2/js/select2.full.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="../assets/all/sweetalert2/sweetalert2.min.js"></script>
 <!-- AdminLTE App -->

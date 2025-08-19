@@ -6,222 +6,30 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit313f0b3590e8b6fb7571837d6a664040
 {
-    public static $files = array (
-        '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
-        'db356362850385d08a5381de2638b5fd' => __DIR__ . '/..' . '/mpdf/mpdf/src/functions.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
-        's' => 
-        array (
-            'setasign\\Fpdi\\' => 14,
-        ),
-        'Z' => 
-        array (
-            'Zend\\Stdlib\\' => 12,
-            'Zend\\ServiceManager\\' => 20,
-            'Zend\\Memory\\' => 12,
-            'Zend\\Hydrator\\' => 14,
-            'Zend\\EventManager\\' => 18,
-            'Zend\\Cache\\' => 11,
-        ),
-        'S' => 
-        array (
-            'Sensio\\Bundle\\FrameworkExtraBundle\\' => 35,
-        ),
         'P' => 
         array (
-            'Psr\\Log\\' => 8,
-            'Psr\\Http\\Message\\' => 17,
-            'Psr\\Container\\' => 14,
-            'Psr\\Cache\\' => 10,
             'PhpOffice\\PhpWord\\' => 18,
-        ),
-        'M' => 
-        array (
-            'Mpdf\\PsrLogAwareTrait\\' => 22,
-            'Mpdf\\PsrHttpMessageShim\\' => 24,
-            'Mpdf\\' => 5,
         ),
         'L' => 
         array (
             'Laminas\\Escaper\\' => 16,
         ),
-        'I' => 
-        array (
-            'Interop\\Container\\' => 18,
-        ),
-        'D' => 
-        array (
-            'Doctrine\\Persistence\\' => 21,
-            'Doctrine\\Inflector\\' => 19,
-            'Doctrine\\Deprecations\\' => 22,
-            'Doctrine\\Common\\Lexer\\' => 22,
-            'Doctrine\\Common\\Inflector\\' => 26,
-            'Doctrine\\Common\\Collections\\' => 28,
-            'Doctrine\\Common\\Cache\\' => 22,
-            'Doctrine\\Common\\Annotations\\' => 28,
-            'Doctrine\\Common\\' => 16,
-            'DeepCopy\\' => 9,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'setasign\\Fpdi\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/setasign/fpdi/src',
-        ),
-        'Zend\\Stdlib\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-stdlib/src',
-        ),
-        'Zend\\ServiceManager\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-servicemanager/src',
-        ),
-        'Zend\\Memory\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-memory/src',
-        ),
-        'Zend\\Hydrator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-hydrator/src',
-        ),
-        'Zend\\EventManager\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-eventmanager/src',
-        ),
-        'Zend\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/zendframework/zend-cache/src',
-        ),
-        'Sensio\\Bundle\\FrameworkExtraBundle\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/sensio/framework-extra-bundle',
-        ),
-        'Psr\\Log\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/log/src',
-        ),
-        'Psr\\Http\\Message\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-        ),
-        'Psr\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
-        'Psr\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
         'PhpOffice\\PhpWord\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
-        ),
-        'Mpdf\\PsrLogAwareTrait\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/mpdf/psr-log-aware-trait/src',
-        ),
-        'Mpdf\\PsrHttpMessageShim\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/mpdf/psr-http-message-shim/src',
-        ),
-        'Mpdf\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
         ),
         'Laminas\\Escaper\\' => 
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
-        'Interop\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/container-interop/container-interop/src/Interop/Container',
-        ),
-        'Doctrine\\Persistence\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Persistence',
-        ),
-        'Doctrine\\Inflector\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Inflector',
-        ),
-        'Doctrine\\Deprecations\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations',
-        ),
-        'Doctrine\\Common\\Lexer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
-        ),
-        'Doctrine\\Common\\Inflector\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
-        ),
-        'Doctrine\\Common\\Collections\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/collections/lib/Doctrine/Common/Collections',
-        ),
-        'Doctrine\\Common\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/cache/lib/Doctrine/Common/Cache',
-        ),
-        'Doctrine\\Common\\Annotations\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
-        ),
-        'Doctrine\\Common\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
-            1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
-            2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
-            3 => __DIR__ . '/..' . '/doctrine/common/lib/Doctrine/Common',
-        ),
-        'DeepCopy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
-        ),
-    );
-
-    public static $prefixesPsr0 = array (
-        'Z' => 
-        array (
-            'ZendPdf\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/zendframework/zendpdf/library',
-            ),
-        ),
-        'S' => 
-        array (
-            'Symfony' => 
-            array (
-                0 => __DIR__ . '/..' . '/symfony/symfony/src',
-            ),
-        ),
-        'P' => 
-        array (
-            'Ps\\PdfBundle' => 
-            array (
-                0 => __DIR__ . '/..' . '/psliwa/pdf-bundle',
-            ),
-            'PHPPdf' => 
-            array (
-                0 => __DIR__ . '/..' . '/psliwa/php-pdf/lib',
-            ),
-        ),
-        'I' => 
-        array (
-            'Imagine' => 
-            array (
-                0 => __DIR__ . '/..' . '/psliwa/php-pdf/lib',
-            ),
-        ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -229,7 +37,6 @@ class ComposerStaticInit313f0b3590e8b6fb7571837d6a664040
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit313f0b3590e8b6fb7571837d6a664040::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit313f0b3590e8b6fb7571837d6a664040::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit313f0b3590e8b6fb7571837d6a664040::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit313f0b3590e8b6fb7571837d6a664040::$classMap;
 
         }, null, ClassLoader::class);

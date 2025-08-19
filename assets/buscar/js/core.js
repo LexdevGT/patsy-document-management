@@ -86,6 +86,7 @@ function loadFolderContent(folderName) {
                     } else {
                         // Descargar el archivo (ajusta el código según tus necesidades)
                         downloadFile(path);
+                        console.log(path);
                     }
                 });
 
@@ -150,11 +151,12 @@ function load_explorer() {
                     var isFolder = $(this).hasClass('folder-name');
 
                     if (isFolder) {
-                        // Navegar a la carpeta (ajusta el código según tus necesidades)
+                        // Navegar a la carpeta 
                         navigateToFolder(path);
                     } else {
-                        // Descargar el archivo (ajusta el código según tus necesidades)
+                        // Descargar el archivo 
                         downloadFile(path);
+                        console.log(path);
                     }
                 });
             } else {
@@ -209,6 +211,7 @@ function navigateToFolder(folderName) {
 
 // Función para descargar el archivo
 function downloadFile(fileName) {
+    //alert(fileName);
     // Ajusta la ruta del servicio PHP que manejará la descarga
     var downloadUrl = '../assets/all/php/download.php';
 

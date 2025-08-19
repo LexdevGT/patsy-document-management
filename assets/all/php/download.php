@@ -7,7 +7,7 @@
 
 	    $nuevaCadena = str_replace($filePath,'',$fileName);
 	
-	    //error_log("FilePath: $fileName");
+	   	error_log("FilePath: $fileName");
 
 	    if (file_exists($fileName)) {
 	        // Establecer las cabeceras para forzar la descarga

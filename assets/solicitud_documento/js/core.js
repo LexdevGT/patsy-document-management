@@ -21,7 +21,7 @@ $(function(){
         });
         setTimeout(function() {
             location.reload();
-          }, 2000);
+          }, 12000);
     });
 
     $('#proceso').change(function(){
@@ -33,6 +33,8 @@ $(function(){
         $('.custom-file-label').html(fileName);
         //console.log(fileName);
     });
+
+    $('.select2').select2();
 
 });
 
@@ -63,14 +65,15 @@ function new_function() {
     });
 }
 
+
 function crear_documento() {
     // Recopila los valores de los campos del formulario
     var status = $('#status').val();
     var proceso_principal = $('#proceso').val();
     var subproceso = $('#subproceso').val();
-    var tipo_documento = $('#select_tipo_documento').val();
+    var tipo_documento = 'NA';
     var nombre_documento = $('#nombre_docto').val();
-    var quien_solicita = $('#quien_solicita').val();
+    //var quien_solicita = $('#quien_solicita').val();
     var quien_revisa = $('#quien_revisa').val();
     var quien_aprueba = $('#quien_aprueba').val();
     var quien_visualiza = $('#quien_visualiza').val();
@@ -94,12 +97,12 @@ function crear_documento() {
         var minuto = ('0' + fechaActual.getMinutes()).slice(-2);
         var segundo = ('0' + fechaActual.getSeconds()).slice(-2);
 
-        // Crea el string con el formato deseado
-        var formatoFechaHora = mes + '-' + dia + '-' + año + '_' + hora + '-' + minuto + '-' + segundo;
-        //console.log(formatoFechaHora);
-
-        var codigo = proceso_principal+'-'+tipo_documento+'-'+formatoFechaHora;
-        $('#codigo').val(codigo);
+        var siglas_proceso_principal = proceso_principal.substring(0,2);
+        var siglas_tipo_documento = tipo_documento;
+        //console.log(siglas_tipo_documento);
+        siglas_tipo_documento = siglas_tipo_documento.substring(0,2);
+        var codigo = siglas_tipo_documento+'-'+siglas_proceso_principal+'-';
+        //$('#codigo').val(codigo);
 
         // Creando el objeto FormData y agrego los datos del formulario
         var formData = new FormData();
@@ -109,7 +112,7 @@ function crear_documento() {
         formData.append('subproceso', subproceso);
         //formData.append('tipo_documento', tipo_documento);
         formData.append('codigo', codigo);
-        formData.append('quien_elabora', quien_solicita);
+        //formData.append('quien_elabora', quien_solicita);
         formData.append('quien_revisa', quien_revisa);
         //formData.append('quien_aprueba', quien_aprueba);
         formData.append('quien_aprueba', '');
@@ -120,7 +123,8 @@ function crear_documento() {
 
         // Agrega el archivo al objeto FormData
         formData.append('archivo', archivo);
-
+//console.log(formData);
+//debugger;
         // Realiza una solicitud AJAX con el objeto FormData
         $.ajax({
             type: 'POST',
@@ -130,11 +134,12 @@ function crear_documento() {
             contentType: false, // Evita que jQuery establezca automáticamente el encabezado Content-Type
             dataType: 'json',
             success: function (response) {
+                //console.log('RESPONSE: '+response)
                 if (response.error === '') {
                     // Los datos se han guardado correctamente, puedes realizar acciones adicionales si es necesario
                     
                     alert('Documento solicitado exitosamente');
-                    alert('El código de tu documento solicitado es el siguiente: '+codigo+' por si deseas apuntarlo!');
+                    alert('El código de tu documento solicitado es el siguiente: '+response.codigo+' por si deseas apuntarlo!');
                     
                     location.reload();
                 } else {
@@ -142,7 +147,8 @@ function crear_documento() {
                 }
             },
             error: function (xhr, status, error) {
-                alert('Error al enviar los datos al servidor: ' + error); // Maneja los errores de la solicitud AJAX
+                console.log('ERROR: '+error);
+                alert('Error al enviar los datos al servidor: ' + error + ' STATUS: ' + status); // Maneja los errores de la solicitud AJAX
             }
         });
 
@@ -171,7 +177,7 @@ function cargar_select_usuarios() {
                 $('.usuarios').empty();
                 var select_html = "<option value='0'>Selecciona un usuario...</option>";
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('.usuarios').html(select_html);
             } else {
