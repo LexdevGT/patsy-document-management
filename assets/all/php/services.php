@@ -73,6 +73,9 @@
 		    case 'crear_tipo_docto':
 		        mtdd_ctdd_Function(); 
 		        break;
+		    case 'editar_tipo_docto':
+		        mtdd_etd_Function(); 
+		        break;
 		    case 'load_tipo_docto_list':
 				mtdd_ltdl_Function();
 				break;
@@ -2810,6 +2813,34 @@ error_log($query);
 	        }
 		}else {
 	        $error = 'Falta información requerida para la creación del tipo de documento.';
+	    }
+
+		$jsondata['message'] = $message;
+		$jsondata['error']   = $error;
+		echo json_encode($jsondata);
+	}
+
+	function mtdd_etd_Function(){
+		global $conn;
+		$jsondata = array();
+		$error 	  = '';
+		$message  = '';
+
+		if (isset($_POST['id']) && isset($_POST['nombre']) && isset($_POST['siglas'])){
+			$id = $_POST['id'];
+			$nombre = utf8_encode($_POST['nombre']);
+			$siglas = $_POST['siglas'];
+			
+			$query = "UPDATE tipo_de_documentos SET tipo_de_documento='$nombre', siglas='$siglas' WHERE id='$id'";
+			$execute_query = $conn->query($query);
+
+			if ($execute_query) {
+	            $message = 'Tipo de documento actualizado correctamente en la base de datos.';
+	        } else {
+	            $error = 'Error al actualizar el tipo de documento en la base de datos: ' . $conn->error;
+	        }
+		}else {
+	        $error = 'Falta información requerida para la actualización del tipo de documento.';
 	    }
 
 		$jsondata['message'] = $message;

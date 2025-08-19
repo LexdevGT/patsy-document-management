@@ -92,7 +92,9 @@ function renderTable() {
     tableBody.empty();
 
     if (allData.length === 0) {
-        tableBody.append('<tr><td colspan="4">No se encontraron tipos de documentos.</td></tr>');
+
+        tableBody.append('<tr><td colspan="5">No se encontraron tipos de documentos.</td></tr>');
+
         return;
     }
 
@@ -103,8 +105,10 @@ function renderTable() {
     $.each(pageData, function (index, tipo_docto) {
         var row = $('<tr>');
         row.append('<td>' + (start + index + 1) + '.</td>');
-        row.append('<td>' + decodeURI(escape(tipo_docto.nombre)) + '</td>');
-        row.append('<td>' + decodeURI(escape(tipo_docto.siglas)) + '</td>');
+
+        row.append('<td id="nombre_' + tipo_docto.id + '">' + decodeURI(escape(tipo_docto.nombre)) + '</td>');
+        row.append('<td id="siglas_' + tipo_docto.id + '">' + decodeURI(escape(tipo_docto.siglas)) + '</td>');
+
         
         var switchHtml = '<div class="form-group">' +
             '<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">' +
@@ -121,6 +125,13 @@ function renderTable() {
             '</div>';
 
         row.append('<td>' + switchHtml + '</td>');
+        
+        // Columna de acciones con botón editar
+        var editButton = '<button class="btn btn-sm btn-warning" onclick="editarTipoDocto(' + tipo_docto.id + ')">' +
+                        '<i class="fas fa-edit"></i> Editar</button>';
+        row.append('<td>' + editButton + '</td>');
+        
+
         tableBody.append(row);
     });
 }
@@ -164,6 +175,44 @@ function changePage(page) {
     currentPage = page;
     renderTable();
     renderPagination();
+}
+
+
+function editarTipoDocto(id) {
+    var nombreActual = $('#nombre_' + id).text();
+    var siglasActuales = $('#siglas_' + id).text();
+    
+    var nuevoNombre = prompt('Editar nombre del tipo de documento:', nombreActual);
+    if (nuevoNombre === null) return; // Cancelado
+    
+    var nuevasSiglas = prompt('Editar abreviatura:', siglasActuales);
+    if (nuevasSiglas === null) return; // Cancelado
+    
+    if (nuevoNombre.trim() === '' || nuevasSiglas.trim() === '') {
+        alert('El nombre y la abreviatura no pueden estar vacíos.');
+        return;
+    }
+    
+    $.ajax({
+        contentType: "application/x-www-form-urlencoded",
+        type: "POST",
+        url: "../assets/all/php/services.php",
+        data: {
+            option: 'editar_tipo_docto',
+            id: id,
+            nombre: nuevoNombre.trim(),
+            siglas: nuevasSiglas.trim()
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response.error === '') {
+                alert('Tipo de documento actualizado correctamente.');
+                load_list();
+            } else {
+                alert('Error al actualizar el tipo de documento: ' + response.error);
+            }
+        }
+    });
 }
 
 function create_tipo_docto() {
