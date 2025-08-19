@@ -190,7 +190,7 @@ function cargar_select_usuarios() {
                 $('.usuarios').empty();
                 var select_html = "<option value='0'>Selecciona un usuario...</option>";
                 $.each(response.html, function(index, info) {
-                    select_html += "<option value='"+info.id+"'>"+decodeURI(escape(info.nombre))+"</option>";
+                    select_html += "<option value='"+info.id+"'>"+info.nombre+"</option>";
                 });
                 $('.usuarios').html(select_html);
             } else {
@@ -221,7 +221,7 @@ function buscarDocumentos(keyword) {
                         var item = $('<div class="suggestion-item" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee;">')
                             .data('nombre', doc.nombre)
                             .data('codigo', doc.codigo)
-                            .html('<strong>' + decodeURI(escape(doc.nombre)) + '</strong><br><small>Código: ' + doc.codigo + '</small>');
+                            .html('<strong>' + doc.nombre + '</strong><br><small>Código: ' + doc.codigo + '</small>');
                         
                         item.hover(
                             function() { $(this).css('background-color', '#f8f9fa'); },

@@ -2805,7 +2805,7 @@ error_log($query);
 		$message  = '';
 
 		if (isset($_POST['nombre'])){
-			$nombre = utf8_encode($_POST['nombre']);
+			$nombre = mb_convert_encoding($_POST['nombre'], 'UTF-8', 'auto');
 			$siglas = $_POST['siglas'];
 			$query = "INSERT INTO tipo_de_documentos (tipo_de_documento,siglas,status) VALUES ('$nombre','$siglas',1)";
 			$execute_query = $conn->query($query);
@@ -2832,7 +2832,7 @@ error_log($query);
 
 		if (isset($_POST['id']) && isset($_POST['nombre']) && isset($_POST['siglas'])){
 			$id = $_POST['id'];
-			$nombre = utf8_encode($_POST['nombre']);
+			$nombre = mb_convert_encoding($_POST['nombre'], 'UTF-8', 'auto');
 			$siglas = $_POST['siglas'];
 			
 			$query = "UPDATE tipo_de_documentos SET tipo_de_documento='$nombre', siglas='$siglas' WHERE id='$id'";
