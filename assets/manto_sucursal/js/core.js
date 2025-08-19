@@ -4,7 +4,7 @@ $(function(){
     load_list();
 
     $('#enviar').click(function(){
-        create_sucursal();
+        create_departamento();
     });
   
 });
@@ -36,7 +36,7 @@ function lista_cambiar_estado(Id, isChecked) {
         type: "POST",
         url: "../assets/all/php/services.php",
         data: {
-            option: 'cambio_de_status_sucursal',
+            option: 'cambio_de_status_departamento',
             id: Id,
             nuevo_estado: isChecked ? 1 : 0
         },
@@ -64,7 +64,7 @@ function load_list() {
         type: "POST",
         url: "../assets/all/php/services.php",
         data: ({
-            option: 'load_sucursal_list'
+            option: 'load_departamento_list'
         }),
         dataType: "json",
         success: function (r) {
@@ -72,24 +72,24 @@ function load_list() {
                 // Verifica si hay datos en la respuesta
                 if (r.data && r.data.length > 0) {
                     // Recorre los datos y construye las filas de la tabla
-                    $.each(r.data, function (index, sucursal) {
+                    $.each(r.data, function (index, departamento) {
                         var row = $('<tr>');
-                        row.append('<td>' + (sucursal.id) + '.</td>');
-                        row.append('<td>' + decodeURI(escape(sucursal.nombre)) + '</td>');
+                        row.append('<td>' + (departamento.id) + '.</td>');
+                        row.append('<td>' + decodeURI(escape(departamento.nombre)) + '</td>');
 
                         // Crea el switch con el estado adecuado
                         var switchHtml = '<div class="form-group">' +
                             '<div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">' +
-                            '<input type="checkbox" class="custom-control-input" id="customSwitch' + (sucursal.id) + '"';
+                            '<input type="checkbox" class="custom-control-input" id="customSwitch' + (departamento.id) + '"';
                         
                         // Verifica el estado del rol (como cadena)
-                        if (sucursal.status === '1') {
+                        if (departamento.status === '1') {
                             switchHtml += ' checked'; // Si status_rol es '1', enciende el switch
                         }
 
-                        switchHtml += ' onclick="lista_cambiar_estado(' + sucursal.id + ', this.checked)"' + // Agrega el controlador de eventos click
+                        switchHtml += ' onclick="lista_cambiar_estado(' + departamento.id + ', this.checked)"' + // Agrega el controlador de eventos click
                             '>' +
-                            '<label class="custom-control-label" for="customSwitch' + sucursal.id + '"></label>' +
+                            '<label class="custom-control-label" for="customSwitch' + departamento.id + '"></label>' +
                             '</div>' +
                             '</div>';
 
@@ -98,7 +98,7 @@ function load_list() {
                     });
                 } else {
                     // No se encontraron roles
-                    tableBody.append('<tr><td colspan="3">No se encontraron regiones.</td></tr>');
+                    tableBody.append('<tr><td colspan="3">No se encontraron departamentos.</td></tr>');
                 }
             } else {
                 alert(r.error);
@@ -107,26 +107,26 @@ function load_list() {
     });
 }
 
-function create_sucursal() {
+function create_departamento() {
 
-    var nombre_sucursal = $('#nombre_sucursal');
+    var nombre_departamento = $('#nombre_departamento');
 
     $.ajax({
         contentType: "application/x-www-form-urlencoded",
         type: "POST",
         url: "../assets/all/php/services.php",
         data: {
-            option: 'crear_sucursal',
-            nombre: $('#nombre_sucursal').val()
+            option: 'crear_departamento',
+            nombre: $('#nombre_departamento').val()
         },
         dataType: "json",
         success: function (response) {
             if (response.error === '') {
-                alert('Sucursal creada correctamente.');
-                nombre_sucursal.val('');
+                alert('Departamento creado correctamente.');
+                nombre_departamento.val('');
                 load_list();
             } else {
-                alert('Error al crear la sucursal: ' + response.error);
+                alert('Error al crear el departamento: ' + response.error);
             }
         }
     });
@@ -134,6 +134,6 @@ function create_sucursal() {
 
 function sidebar(){
     $('.nav-link').removeClass('active');
-    $('.nav-link').find('i.manto_sucursal').parent().addClass( "active" );
+    $('.nav-link').find('i.manto_departamento').parent().addClass( "active" );
 }
 
