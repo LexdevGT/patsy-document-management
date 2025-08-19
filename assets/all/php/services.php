@@ -2445,6 +2445,7 @@ error_log($query);
 				WHERE p.id_rol = $rol_id
 				AND status = 1
 				AND nombre_opcion_privilegio <> 'AprobaciÃ³n'
+				AND nombre_opcion_privilegio <> 'Documentos externos'
 	   		";
 //error_log($query);
 		    $result = $conn->query($query);
