@@ -739,8 +739,7 @@
 		$message  		 = '';
 		$nombre 		 = $_POST['nombre'];
 		$apellido 		 = $_POST['apellido'];
-		$select_region 	 = $_POST['select_region'];
-		$select_sucursal = $_POST['select_sucursal'];
+		$select_sucursal = $_POST['select_departamento'];
 		$select_rol		 = $_POST['select_rol'];
 		$pass1 			 = $_POST['pass1'];
 		$pass2 			 = $_POST['pass2'];
@@ -752,7 +751,6 @@
 				UPDATE users
 				SET nombre = '$nombre',
 				apellido = '$apellido',
-				region_id = $select_region,
 				sucursal_id = $select_sucursal,
 				rol_id = $select_rol,
 				password = md5('$pass1')
@@ -763,7 +761,6 @@
 				UPDATE users
 				SET nombre = '$nombre',
 				apellido = '$apellido',
-				region_id = $select_region,
 				sucursal_id = $select_sucursal,
 				rol_id = $select_rol
 				WHERE email = '$email'
@@ -2574,14 +2571,29 @@ error_log($query);
 	    $jsondata = array();
 	    $error = '';
 	    $message = '';
+	    
+	    // Parámetros de paginación
+	    $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
+	    $limit = isset($_POST['limit']) ? (int)$_POST['limit'] : 10;
+	    $offset = ($page - 1) * $limit;
+	    
+	    // Contar total de registros
+	    $count_query = "
+	        SELECT COUNT(*) as total 
+	        FROM users u
+	        INNER JOIN roles r ON u.rol_id = r.id_rol
+	    ";
+	    $count_result = $conn->query($count_query);
+	    $total_records = $count_result->fetch_array()['total'];
+	    $total_pages = ceil($total_records / $limit);
 
-	    //$query = "SELECT id, nombre, apellido, email, status FROM users";
+	    // Consulta con paginación
 	    $query = "
 	    	SELECT id, nombre, apellido, email, r.nombre_rol, status 
 			FROM users u
 			INNER JOIN roles r
 			ON u.rol_id = r.id_rol
-
+			LIMIT $limit OFFSET $offset
 	    ";
 
 	    // Ejecuta la consulta y verifica si se ejecutó correctamente
@@ -2589,7 +2601,7 @@ error_log($query);
 
 	    if ($execute_query) {
 	        // La consulta se ejecutó con éxito, ahora puedes obtener los resultados
-	        $rows = array();
+	        $data_rows = array();
 	        while ($row = $execute_query->fetch_array()) {
 	            $id 		= $row['id'];
 	            $nombre 	= $row['nombre'];
@@ -2611,6 +2623,10 @@ error_log($query);
 
 	        // Agrega los resultados al arreglo jsondata
 	        $jsondata['data'] = $data_rows;
+	        $jsondata['current_page'] = $page;
+	        $jsondata['total_pages'] = $total_pages;
+	        $jsondata['total_records'] = $total_records;
+	        $jsondata['limit'] = $limit;
 	        $message = 'Consulta ejecutada con éxito.';
 	    } else {
 	        // La consulta falló, establece un mensaje de error
@@ -2634,7 +2650,6 @@ error_log($query);
 			$apellido 	= $_POST['apellido'];
 			$email 		= $_POST['email'];
 			$foto 		= $_POST['foto'];
-			$region 	= $_POST['region'];
 			$sucursal 	= $_POST['sucursal'];
 			$rol 		= $_POST['rol'];
 			$status 	= $_POST['status'];
@@ -2643,7 +2658,7 @@ error_log($query);
 			$firma 		= $_POST['firma'];
 
 			if($pass1 == $pass2){
-				$query = "INSERT INTO users (nombre,apellido,email,foto,region_id,sucursal_id,rol_id,status,password,firma) VALUES ('$nombre','$apellido','$email','$foto',$region,$sucursal,$rol,$status,md5('$pass1'),'$firma')";
+				$query = "INSERT INTO users (nombre,apellido,email,foto,sucursal_id,rol_id,status,password,firma) VALUES ('$nombre','$apellido','$email','$foto',$sucursal,$rol,$status,md5('$pass1'),'$firma')";
 				$execute_query = $conn->query($query);
 
 				if ($execute_query) {
