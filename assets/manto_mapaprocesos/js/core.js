@@ -36,7 +36,9 @@ $(function() {
     $(document).on('click', '.edit-folder', function(event) {
         event.stopPropagation();
         var folderPath = $(this).data('folder');
-        $('#newFolderName').val(''); // Limpiar el campo de entrada antes de mostrarlo
+        // Remover el slash final si existe y obtener el nombre de la carpeta
+        var currentFolderName = folderPath.replace(/\/$/, '').split('/').pop();
+        $('#newFolderName').val(currentFolderName); // Pre-llenar el campo con el nombre actual
         $('#renameFolderModal').data('folder', folderPath); // Almacenar la ruta de la carpeta en el modal
         $('#renameFolderModal').modal('show'); // Mostrar el modal
     });

@@ -6,6 +6,14 @@ $(function(){
         load_search_control_cambios(search);
         //alert(search);
     });
+
+    // Manejar el clic en el botón de cerrar búsqueda (fa-times)
+    $('[data-widget="navbar-search"]').click(function(){
+        // Limpiar el campo de búsqueda
+        $('.form-control-navbar').val('');
+        // Recargar la tabla sin filtros
+        load_documentos_control_cambios();
+    });
 });
 
 function new_function() {

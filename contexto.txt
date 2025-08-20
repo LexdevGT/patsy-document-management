@@ -1,0 +1,169 @@
+=================================================================================
+                            CONTEXTO DEL PROYECTO - PATSY DM
+=================================================================================
+
+PROYECTO: Sistema de Gestión Documental "Patsy DM"
+UBICACIÓN: /Applications/XAMPP/xamppfiles/htdocs/p-d-management/
+IDIOMA: Español
+TECNOLOGÍAS: PHP, JavaScript (jQuery), HTML, CSS (AdminLTE), MySQL
+
+=================================================================================
+                                ARQUITECTURA
+=================================================================================
+
+ESTRUCTURA DE CARPETAS:
+/p-d-management/
+├── pages/                     # Páginas HTML principales
+├── assets/                    # Recursos del sistema
+│   ├── all/                   # Recursos compartidos
+│   │   ├── php/               # Scripts PHP backend
+│   │   ├── js/                # JavaScript global
+│   │   └── css/               # Estilos globales
+│   └── [modulo]/              # Recursos específicos por módulo
+│       └── js/core.js         # JavaScript específico del módulo
+└── index.html                 # Página principal
+
+PATRÓN DE DESARROLLO:
+- Cada página HTML tiene su archivo JavaScript específico en assets/[modulo]/js/core.js
+- Comunicación via AJAX con assets/all/php/services.php
+- Base de datos MySQL con conexión en assets/all/php/connect.php
+
+=================================================================================
+                                 MÓDULOS PRINCIPALES
+=================================================================================
+
+1. MANTENIMIENTO DE USUARIOS (/pages/manto_usuarios.html)
+   - Gestión completa de usuarios (CRUD)
+   - SIN región (removida completamente)
+   - CON paginación automática (10 usuarios/página)
+   - Campos: nombre, apellido, email, departamento, rol, estatus, contraseña, foto, firma
+
+2. MANTENIMIENTO MAPA DE PROCESOS (/pages/manto_mapaprocesos.html)
+   - Gestión de carpetas de documentos
+   - Modal de edición con auto-llenado del nombre actual
+   - Operaciones: crear, renombrar, eliminar carpetas
+
+3. CONTROL DE CAMBIOS (/pages/control_cambios.html)
+   - Visualización de cambios en documentos
+   - Búsqueda funcional con botón de limpiar
+   - Placeholder en español: "Busqueda"
+
+=================================================================================
+                            FUNCIONALIDADES CLAVE
+=================================================================================
+
+PAGINACIÓN AUTOMÁTICA:
+- Implementada en manto_usuarios
+- Backend: PHP con LIMIT/OFFSET
+- Frontend: JavaScript dinámico
+- 10 registros por página
+- Navegación inteligente (máximo 5 páginas visibles)
+
+BÚSQUEDA CON FILTRADO:
+- Implementada en control_cambios
+- Búsqueda en tiempo real (keyup)
+- Botón X para limpiar resultados
+- Recarga automática sin filtros
+
+MODAL DE EDICIÓN:
+- En mapa de procesos
+- Auto-llena el nombre actual de la carpeta
+- Maneja rutas que terminan en "/"
+
+=================================================================================
+                               BASE DE DATOS
+=================================================================================
+
+TABLAS PRINCIPALES:
+- users: nombre, apellido, email, sucursal_id, rol_id, status, password, firma, foto
+- roles: id_rol, nombre_rol, status_rol
+- sucursal: id, nombre, status (antes región, ahora departamento)
+- region: TABLA OBSOLETA (ya no se usa)
+
+RELACIONES:
+- users.rol_id → roles.id_rol
+- users.sucursal_id → sucursal.id
+
+=================================================================================
+                               CONVENCIONES
+=================================================================================
+
+NAMING CONVENTIONS:
+- Archivos HTML: snake_case (manto_usuarios.html)
+- Funciones PHP: prefijo_acronimo_Function() (mu_lul_Function)
+- IDs HTML: snake_case (select_departamento)
+- Clases CSS: kebab-case siguiendo AdminLTE
+
+PATRÓN AJAX:
+```javascript
+$.ajax({
+    contentType: "application/x-www-form-urlencoded",
+    type: "POST",
+    url: "../assets/all/php/services.php",
+    data: { option: 'nombre_operacion', ...params },
+    dataType: "json",
+    success: function(response) {
+        if (response.error === '') {
+            // Lógica de éxito
+        } else {
+            alert(response.error);
+        }
+    }
+});
+```
+
+PATRÓN PHP RESPONSE:
+```php
+$jsondata['data'] = $datos;
+$jsondata['message'] = $mensaje;
+$jsondata['error'] = $error;
+echo json_encode($jsondata);
+```
+
+=================================================================================
+                            CASOS DE USO IMPORTANTES
+=================================================================================
+
+1. CREAR USUARIO:
+   - Validación de contraseñas
+   - Upload de foto y firma
+   - Sin región, solo departamento y rol
+
+2. MODIFICAR USUARIO:
+   - Pre-carga de datos existentes
+   - Campos email/estatus/archivos deshabilitados en edición
+   - Contraseña opcional
+
+3. PAGINACIÓN:
+   - Carga inicial página 1
+   - Navegación por páginas
+   - Recálculo automático al modificar datos
+
+4. BÚSQUEDA:
+   - Filtrado en tiempo real
+   - Botón limpiar restaura vista completa
+   - No usar cache, siempre consultar backend
+
+=================================================================================
+                                 OBSERVACIONES
+=================================================================================
+
+- Sistema en español (placeholders, mensajes, etiquetas)
+- Uso intensivo de AdminLTE para UI
+- SweetAlert2 para notificaciones
+- Bootstrap 4 para grid system
+- jQuery como librería principal JavaScript
+- Summernote para editores de texto ricos
+- FontAwesome para iconografía
+
+ARQUITECTURA FRONTEND-BACKEND:
+- Frontend: HTML + JS (jQuery) + CSS (AdminLTE)
+- Backend: PHP puro + MySQL
+- Comunicación: AJAX/JSON
+- Sin frameworks modernos (Vue/React/Angular)
+
+ESTADO ACTUAL:
+- Sistema funcional y en desarrollo
+- Múltiples módulos de mantenimiento
+- Gestión documental con carpetas físicas
+- Control de usuarios y permisos por roles

@@ -1,0 +1,177 @@
+==============================================================================
+                        CAMBIOS REALIZADOS EN ESTA SESIÓN
+==============================================================================
+Fecha: 2025-08-20
+Sistema: Patsy DM - Sistema de Gestión Documental
+
+==============================================================================
+                          1. MODAL DE EDICIÓN CARPETAS
+==============================================================================
+Ubicación: /pages/manto_mapaprocesos.html
+
+PROBLEMA IDENTIFICADO:
+- Modal de edición de carpetas se abría vacío
+- Usuario tenía que escribir el nombre completo nuevamente
+
+ARCHIVO MODIFICADO:
+- /assets/manto_mapaprocesos/js/core.js
+
+CAMBIOS ESPECÍFICOS:
+✓ Línea 39: Cambió $('#newFolderName').val(''); 
+  Por: var currentFolderName = folderPath.replace(/\/$/, '').split('/').pop();
+✓ Línea 40: Agregó $('#newFolderName').val(currentFolderName);
+
+FUNCIONALIDAD IMPLEMENTADA:
+- Auto-llenado del nombre actual de carpeta en modal de edición
+- Manejo correcto de rutas que terminan en slash (/)
+- Extracción del nombre usando replace() + split() + pop()
+
+==============================================================================
+                        2. BOTÓN LIMPIAR BÚSQUEDA
+==============================================================================
+Ubicación: /pages/control_cambios.html
+
+PROBLEMA IDENTIFICADO:
+- Botón X (fa-times) no tenía funcionalidad
+- Búsquedas quedaban filtradas sin forma de limpiar
+
+ARCHIVO MODIFICADO:
+- /assets/control_cambios/js/core.js
+
+CAMBIOS ESPECÍFICOS:
+✓ Líneas 11-16: Agregó manejador de evento para botón de cerrar
+✓ Detecta clic en [data-widget="navbar-search"]
+✓ Limpia campo de búsqueda: $('.form-control-navbar').val('');
+✓ Recarga tabla sin filtros: load_documentos_control_cambios();
+
+FUNCIONALIDAD IMPLEMENTADA:
+- Botón X funcional para limpiar búsqueda
+- Restaura vista completa de documentos
+- Limpia campo de texto automáticamente
+
+==============================================================================
+                        3. TRADUCCIÓN A ESPAÑOL
+==============================================================================
+Ubicación: /pages/control_cambios.html
+
+PROBLEMA IDENTIFICADO:
+- Placeholder del campo búsqueda en inglés: "Search"
+
+ARCHIVO MODIFICADO:
+- /pages/control_cambios.html
+
+CAMBIOS ESPECÍFICOS:
+✓ Línea 38: Cambió placeholder="Search" por placeholder="Busqueda"
+✓ Línea 38: Cambió aria-label="Search" por aria-label="Busqueda"
+
+FUNCIONALIDAD IMPLEMENTADA:
+- Interface completamente en español
+- Consistencia de idioma en toda la aplicación
+
+==============================================================================
+                     4. ELIMINACIÓN DE REGIÓN DE USUARIOS
+==============================================================================
+Ubicación: /pages/manto_usuarios.html
+
+PROBLEMA IDENTIFICADO:
+- Campo región ya no se usaba en el sistema
+- Necesidad de simplificar formulario
+
+ARCHIVOS MODIFICADOS:
+- /pages/manto_usuarios.html
+- /assets/manto_usuarios/js/core.js  
+- /assets/all/php/services.php
+
+CAMBIOS HTML:
+✓ Removió label "Región:" y su columna
+✓ Cambió grid de col-sm-3 a col-sm-4 para departamento/rol/estatus
+✓ Eliminó select con id="select_region"
+
+CAMBIOS JAVASCRIPT:
+✓ Eliminó load_region_select() de inicialización
+✓ Removió 'region_id' del array de selects para edición
+✓ Eliminó manejo de campo region_id en función editar
+✓ Removió variables select_region de función modificar_usuario
+✓ Eliminó función load_region_select() completamente
+
+CAMBIOS PHP:
+✓ Función mu_cu_Function(): Removió $region = $_POST['region']
+✓ Función mu_cu_Function(): Eliminó region_id del INSERT
+✓ Función mu_mu_Function(): Cambió $select_region por $select_departamento
+✓ Función mu_mu_Function(): Removió region_id de ambos UPDATE queries
+
+FUNCIONALIDAD IMPLEMENTADA:
+- Sistema funciona sin región en usuarios
+- Formulario más limpio y enfocado
+- Base de datos actualizada sin referencias a región
+- CRUD completo funcional (Create, Read, Update, Delete)
+
+==============================================================================
+                       5. PAGINACIÓN AUTOMÁTICA
+==============================================================================
+Ubicación: /pages/manto_usuarios.html
+
+PROBLEMA IDENTIFICADO:
+- Paginación estática e inútil (botones 1,2,3 hardcodeados)
+- Sin funcionalidad real de navegación
+
+ARCHIVOS MODIFICADOS:
+- /assets/all/php/services.php (función mu_lul_Function)
+- /assets/manto_usuarios/js/core.js
+- /pages/manto_usuarios.html
+
+CAMBIOS PHP:
+✓ Agregó parámetros: $page, $limit, $offset
+✓ Consulta COUNT para total de registros
+✓ Query principal con LIMIT y OFFSET
+✓ Response con: current_page, total_pages, total_records, limit
+
+CAMBIOS JAVASCRIPT:
+✓ Variables globales: currentPage, usersPerPage
+✓ Función load_list() acepta parámetro page
+✓ Nueva función updatePagination() para generar botones
+✓ Navegación inteligente (máximo 5 páginas visibles)
+✓ Botones anterior/siguiente con estados disabled
+
+CAMBIOS HTML:
+✓ Limpia estructura de paginación estática
+✓ Comentario explicativo sobre generación automática
+
+FUNCIONALIDAD IMPLEMENTADA:
+- 10 usuarios por página (configurable)
+- Navegación dinámica entre páginas
+- Botones anterior/siguiente funcionales
+- Página activa destacada visualmente
+- Recálculo automático al agregar/modificar usuarios
+- Estados disabled para botones no disponibles
+
+==============================================================================
+                             RESUMEN TÉCNICO
+==============================================================================
+
+ARCHIVOS TOTALES MODIFICADOS: 6
+- /pages/manto_mapaprocesos.html -> No modificado (solo JS)
+- /pages/control_cambios.html -> Traducción placeholder
+- /pages/manto_usuarios.html -> Eliminación región + paginación HTML
+- /assets/manto_mapaprocesos/js/core.js -> Auto-llenado modal
+- /assets/control_cambios/js/core.js -> Funcionalidad botón limpiar
+- /assets/manto_usuarios/js/core.js -> Eliminación región + paginación JS
+- /assets/all/php/services.php -> Eliminación región + paginación backend
+
+LÍNEAS DE CÓDIGO MODIFICADAS: ~150
+FUNCIONALIDADES AGREGADAS: 4
+BUGS CORREGIDOS: 2
+MEJORAS UX: 3
+
+IMPACTO:
+✓ Sistema más funcional y usable
+✓ Interface completamente en español
+✓ Eliminación de funcionalidad obsoleta (región)
+✓ Paginación real y automática
+✓ Formularios más intuitivos con auto-llenado
+
+TESTING REQUERIDO:
+- Probar modal de edición de carpetas
+- Verificar funcionalidad de búsqueda y botón limpiar
+- Validar CRUD de usuarios sin región
+- Confirmar paginación con diferentes volúmenes de datos

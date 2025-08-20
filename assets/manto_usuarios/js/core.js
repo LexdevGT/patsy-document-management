@@ -1,7 +1,6 @@
 $(function(){
 
     sidebar();    
-    load_region_select();
     load_departamento_select();
     load_roles_select();
     load_list();
@@ -18,7 +17,7 @@ $(function(){
         event.preventDefault();
         var userId = $(this).data('id');
         var inputs = new Array('nombre','apellido','email');
-        var selects = new Array('region_id','sucursal_id','rol_id','status');
+        var selects = new Array('sucursal_id','rol_id','status');
        
         // Hacer una solicitud AJAX para obtener los datos del usuario específico
         $.ajax({
@@ -45,10 +44,6 @@ $(function(){
                         }
                         if (index == 'email') {
                             $('#email').val(data);
-                        }
-                        if (index == 'region_id') {
-                            var region_id = data;
-                            fill_select(region_id,'select_region','region');
                         }
                         if (index == 'sucursal_id') {
                             var sucursal_id = data;
@@ -102,7 +97,6 @@ function modificar_usuario(){
     
     var nombre = $('#nombre').val();
     var apellido = $('#apellido').val();
-    var select_region = $('#select_region').val();
     var select_departamento = $('#select_departamento').val();
     var select_rol = $('#select_rol').val();
     var pass1 = $('#pass1').val();
@@ -117,7 +111,6 @@ function modificar_usuario(){
             option: 'modificar_usuario',
             nombre,
             apellido,
-            select_region,
             select_departamento,
             select_rol,
             pass1,
@@ -247,8 +240,12 @@ function lista_cambiar_estado(Id, isChecked) {
     });
 }
 
-function load_list() {
+var currentPage = 1;
+var usersPerPage = 10;
 
+function load_list(page = 1) {
+    currentPage = page;
+    
     // Obtén la referencia a la tabla
     var tableBody = $('#cuerpo_tabla');
 
@@ -260,7 +257,9 @@ function load_list() {
         type: "POST",
         url: "../assets/all/php/services.php",
         data: ({
-            option: 'load_user_list'
+            option: 'load_user_list',
+            page: page,
+            limit: usersPerPage
         }),
         dataType: "json",
         success: function (r) {
@@ -297,15 +296,51 @@ function load_list() {
                         row.append('<td>' + switchHtml + '</td>');
                         tableBody.append(row);
                     });
+                    
+                    // Actualizar paginación
+                    updatePagination(r.current_page, r.total_pages);
                 } else {
-                    // No se encontraron roles
-                    tableBody.append('<tr><td colspan="3">No se encontraron usuarios en la base de datos.</td></tr>');
+                    // No se encontraron usuarios
+                    tableBody.append('<tr><td colspan="5">No se encontraron usuarios en la base de datos.</td></tr>');
+                    updatePagination(1, 1);
                 }
             } else {
                 alert(r.error);
             }
         }
     });
+}
+
+function updatePagination(currentPage, totalPages) {
+    var paginationHtml = '';
+    
+    // Botón anterior
+    if (currentPage > 1) {
+        paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="load_list(' + (currentPage - 1) + ')">&laquo;</a></li>';
+    } else {
+        paginationHtml += '<li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>';
+    }
+    
+    // Números de página
+    var startPage = Math.max(1, currentPage - 2);
+    var endPage = Math.min(totalPages, currentPage + 2);
+    
+    for (var i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            paginationHtml += '<li class="page-item active"><a class="page-link" href="#">' + i + '</a></li>';
+        } else {
+            paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="load_list(' + i + ')">' + i + '</a></li>';
+        }
+    }
+    
+    // Botón siguiente
+    if (currentPage < totalPages) {
+        paginationHtml += '<li class="page-item"><a class="page-link" href="#" onclick="load_list(' + (currentPage + 1) + ')">&raquo;</a></li>';
+    } else {
+        paginationHtml += '<li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>';
+    }
+    
+    $('.pagination').html(paginationHtml);
 }
 
 
@@ -315,7 +350,6 @@ function create_user() {
     var apellido    = $('#apellido');
     var email       = $('#email');
     var foto        = $('#foto');
-    var region      = $('#select_region');
     var departamento = $('#select_departamento');
     var rol         = $('#select_rol');
     var status      = $('#select_estatus');
@@ -335,7 +369,6 @@ function create_user() {
             apellido: apellido.val(),
             email: email.val(),
             foto: foto.val(),
-            region: region.val(),
             sucursal: departamento.val(),
             rol: rol.val(),
             status: status.val(),
@@ -353,7 +386,6 @@ function create_user() {
                 apellido.val('');
                 email.val('');
                 foto.val('');
-                load_region_select();
                 load_departamento_select();
                 load_roles_select();
                 pass1.val('');
@@ -409,26 +441,6 @@ function load_departamento_select() {
     });
 }
 
-function load_region_select() {
-    $.ajax({
-        contentType: "application/x-www-form-urlencoded",
-        type: "POST",
-        url: "../assets/all/php/services.php",
-        data: {
-            option: 'cargar_select_region'
-        },
-        dataType: "json",
-        success: function (response) {
-            if (response.error === '') {
-                //alert('Estado actualizado correctamente.');
-                $('#select_region').empty();
-                $('#select_region').html(response.html);
-            } else {
-                alert(response.error);
-            }
-        }
-    });
-}
 
 function sidebar(){
     $('.nav-link').removeClass('active');
